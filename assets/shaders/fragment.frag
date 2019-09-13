@@ -203,19 +203,34 @@ float fbm3D(vec3 P, float frequency, float lacunarity, int octaves, float additi
 }
 
 //Source http://www.iquilezles.org/www/articles/distfunctions/distfunctions.htm
-float opSmoothUnion( float d1, float d2, float k ) {
+float opSmoothUnion(float d1, float d2, float k) {
     float h = clamp( 0.5 + 0.5*(d2-d1)/k, 0.0, 1.0 );
     return mix( d2, d1, h ) - k*h*(1.0-h);
 }
 
-float opSmoothSubtraction( float d1, float d2, float k ) {
+float opSmoothSubtraction(float d1, float d2, float k) {
     float h = clamp( 0.5 - 0.5*(d2+d1)/k, 0.0, 1.0 );
     return mix( d2, -d1, h ) + k*h*(1.0-h);
 }
 
-float opSmoothIntersection( float d1, float d2, float k ) {
+float opSmoothIntersection(float d1, float d2, float k) {
     float h = clamp( 0.5 - 0.5*(d2-d1)/k, 0.0, 1.0 );
     return mix( d2, d1, h ) + k*h*(1.0-h);
+}
+
+entity opSmoothUnion(entity m1, entity m2, float k) {
+    float h = clamp( 0.5 + 0.5*(m2.dist-m1.dist)/k, 0.0, 1.0 );
+    float nd = mix( m2.dist, m1.dist, h ) - k*h*(1.0-h);
+    // Adding a 0.1 fixes the union, could be that
+    // the operation changes the original shape minimally
+    if (m2.dist < (nd + 0.1)) {
+        m2.dist = nd;
+        return m2;
+    }
+    else {
+        m1.dist = nd;
+        return m1;
+    }
 }
 
 vec3 opTwist(vec3 p, float angle)
