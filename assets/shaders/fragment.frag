@@ -204,31 +204,58 @@ float fbm3D(vec3 P, float frequency, float lacunarity, int octaves, float additi
 
 //Source http://www.iquilezles.org/www/articles/distfunctions/distfunctions.htm
 float opSmoothUnion(float d1, float d2, float k) {
-    float h = clamp( 0.5 + 0.5*(d2-d1)/k, 0.0, 1.0 );
-    return mix( d2, d1, h ) - k*h*(1.0-h);
+    float h = clamp(0.5 + 0.5 * (d2 - d1) / k, 0.0, 1.0);
+    return mix(d2, d1, h) - k * h * (1.0 - h);
 }
 
 float opSmoothSubtraction(float d1, float d2, float k) {
-    float h = clamp( 0.5 - 0.5*(d2+d1)/k, 0.0, 1.0 );
-    return mix( d2, -d1, h ) + k*h*(1.0-h);
+    float h = clamp(0.5 - 0.5 * (d2 + d1) / k, 0.0, 1.0);
+    return mix(d2, -d1, h) + k * h * (1.0 - h);
 }
 
 float opSmoothIntersection(float d1, float d2, float k) {
     float h = clamp( 0.5 - 0.5*(d2-d1)/k, 0.0, 1.0 );
-    return mix( d2, d1, h ) + k*h*(1.0-h);
+    return mix(d2, d1, h) + k*h*(1.0-h);
 }
 
-entity opSmoothUnion(entity m1, entity m2, float k) {
-    float h = clamp( 0.5 + 0.5*(m2.dist-m1.dist)/k, 0.0, 1.0 );
-    float nd = mix( m2.dist, m1.dist, h ) - k*h*(1.0-h);
+entity opSmoothUnion(entity m1, entity m2, float k, float threshold) {
+    float h = opSmoothUnion(m1.dist, m2.dist, k);
     // Adding a 0.1 fixes the union, could be that
     // the operation changes the original shape minimally
-    if (m2.dist < (nd + 0.1)) {
-        m2.dist = nd;
+    if (m2.dist < (h + threshold)) {
+        m2.dist = h;
         return m2;
     }
     else {
-        m1.dist = nd;
+        m1.dist = h;
+        return m1;
+    }
+}
+
+entity opSmoothSubtraction(entity m1, entity m2, float k, float threshold) {
+    float h = opSmoothSubtraction(m1.dist, m2.dist, k);
+    // Adding a 0.1 fixes the union, could be that
+    // the operation changes the original shape minimally
+    if (m2.dist < (h + threshold)) {
+        m2.dist = h;
+        return m2;
+    }
+    else {
+        m1.dist = h;
+        return m1;
+    }
+}
+
+entity opSmoothIntersection(entity m1, entity m2, float k, float threshold) {
+    float h = opSmoothIntersection(m1.dist, m2.dist, k);
+    // Adding a 0.1 fixes the union, could be that
+    // the operation changes the original shape minimally
+    if (m2.dist < (h + threshold)) {
+        m2.dist = h;
+        return m2;
+    }
+    else {
+        m1.dist = h;
         return m1;
     }
 }
@@ -573,12 +600,13 @@ entity scene(vec3 path, vec2 uv)
 {   
     int a = int(act);
     if(a == 1) {
-        material mat = material(
-            vec3(0.5, 0.5, 0.5),
+        vec3 r = rot(path, vec3(time));
+        material m1 = material(
+            vec3(1.0, 0.0, 0.0),
             1.0,
 
-            vec3(0.0, 1.0, 0.0),
-            1.0,
+            vec3(1.0, 1.0, 1.0),
+            0.2,
 
             vec3(1.0, 1.0, 1.0),
             10.0,
@@ -589,16 +617,68 @@ entity scene(vec3 path, vec2 uv)
             1.5,
             5.5,
             textureOptions(
-                1,
+                0,
                 vec3(1.5, 1.5, 1.5),
                 vec3(2.0, 2.0, 2.0),
                 false
             )
         );
 
-        entity e = mBox(rot(path, vec3(time)), vec3(1.0), 0.1, mat);
-        e.needNormals = true;    
-        return e;
+        entity e1 = mBox(r, vec3(1.0), 0.1, m1);
+        e1.needNormals = true;  
+
+        material m2 = material(
+            vec3(0.0, 1.0, 0.0),
+            1.0,
+
+            vec3(1.0, 1.0, 1.0),
+            0.2,
+
+            vec3(1.0, 1.0, 1.0),
+            10.0,
+            20.0,
+
+            0.2,
+            true,
+            1.5,
+            5.5,
+            textureOptions(
+                0,
+                vec3(1.5, 1.5, 1.5),
+                vec3(2.0, 2.0, 2.0),
+                false
+            )
+        );
+
+        entity e2 = mBox(rotZ(translate(r, vec3(0.5, 1.0, 1.0)), -0.7), vec3(1.0), 0.1, m2);
+        e2.needNormals = true;
+
+        material m3 = material(
+            vec3(0.0, 0.0, 1.0),
+            1.0,
+
+            vec3(1.0, 1.0, 1.0),
+            0.2,
+
+            vec3(1.0, 1.0, 1.0),
+            10.0,
+            20.0,
+
+            0.2,
+            true,
+            1.5,
+            5.5,
+            textureOptions(
+                0,
+                vec3(1.5, 1.5, 1.5),
+                vec3(2.0, 2.0, 2.0),
+                false
+            )
+        );
+
+        entity e3 = mBox(rotZ(translate(r, vec3(-0.5, -1.0, -1.0)), 0.7), vec3(1.0), 0.1, m3);
+        e3.needNormals = true;  
+        return opSmoothUnion(opSmoothUnion(e1, e2, 0.5, 0.25), e3, 0.5, 0.25);
     }
  
 } 
