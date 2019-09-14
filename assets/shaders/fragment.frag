@@ -679,7 +679,7 @@ entity scene(vec3 path, vec2 uv)
 
         entity e3 = mBox(rotZ(translate(r, vec3(-0.5, -1.0, -1.0)), 0.7), vec3(1.0), 0.1, m3);
         e3.needNormals = true;  
-        return opSmoothUnion(opSmoothUnion(e1, e2, 0.5, 0.25), e3, 0.5, 0.25);
+        return opSmoothUnion(opSmoothUnion(e1, e2, 0.5, 0.0), e3, 0.5, 0.0);
     }
  
 } 
