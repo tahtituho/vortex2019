@@ -222,7 +222,8 @@ entity opSmoothUnion(entity m1, entity m2, float k, float threshold) {
     float h = opSmoothUnion(m1.dist, m2.dist, k);
     // Adding a 0.1 fixes the union, could be that
     // the operation changes the original shape minimally
-    if (m2.dist < (h + threshold)) {
+   
+    if (smoothstep(m1.dist, m2.dist, h + threshold) > 0.5) {
         m2.dist = h;
         return m2;
     }
@@ -236,7 +237,7 @@ entity opSmoothSubtraction(entity m1, entity m2, float k, float threshold) {
     float h = opSmoothSubtraction(m1.dist, m2.dist, k);
     // Adding a 0.1 fixes the union, could be that
     // the operation changes the original shape minimally
-    if (m2.dist < (h + threshold)) {
+    if (smoothstep(m1.dist, m2.dist, h + threshold) > 0.5) {
         m2.dist = h;
         return m2;
     }
@@ -250,7 +251,7 @@ entity opSmoothIntersection(entity m1, entity m2, float k, float threshold) {
     float h = opSmoothIntersection(m1.dist, m2.dist, k);
     // Adding a 0.1 fixes the union, could be that
     // the operation changes the original shape minimally
-    if (m2.dist < (h + threshold)) {
+    if (smoothstep(m1.dist, m2.dist, h + threshold) > 0.5) {
         m2.dist = h;
         return m2;
     }
