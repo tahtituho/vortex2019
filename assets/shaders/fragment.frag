@@ -16,7 +16,13 @@ uniform float rayThreshold;
 
 uniform vec3 lightPosition;
 
+uniform vec3 scene1Vector;
+uniform vec2 scene1FloorRotationX;
+uniform vec2 scene1FloorRotationZ;
+
 uniform sampler2D bogdan;
+uniform sampler2D nm;
+uniform sampler2D veins;
 
 in float[12] sines;
 in float[12] coses;
@@ -601,85 +607,45 @@ entity scene(vec3 path, vec2 uv)
 {   
     int a = int(act);
     if(a == 1) {
-        vec3 r = rot(path, vec3(time));
-        material m1 = material(
-            vec3(1.0, 0.0, 0.0),
-            1.0,
+        vec3 modPath = rotY(path, time / 2);
+        material boxFieldMat = material(
+            vec3(0.5, 0.5, 0.5),
+            0.3,
 
             vec3(1.0, 1.0, 1.0),
-            0.2,
+            0.5,
 
             vec3(1.0, 1.0, 1.0),
-            10.0,
-            20.0,
+            0.005,
+            20.1,
 
-            0.2,
+            1.2,
             true,
-            1.5,
-            5.5,
+            0.5,
+            10.0,
             textureOptions(
-                0,
+                3,
                 vec3(1.5, 1.5, 1.5),
                 vec3(2.0, 2.0, 2.0),
-                false
+                true 
             )
         );
+        vec3 size = vec3(1.0);
+        float dist = 2.2;
+        vec3Tuple pathAndCell = repeat(modPath, vec3(size.x * dist, 0.0, size.z * dist));
+        //boxFieldMat.textureOptions.offset.x = 1.0 * (mod(pathAndCell.second.x + int(scene1Vector.y), scene1Vector.x) * mod(pathAndCell.second.z, int(scene1Vector.z)));
+        //boxFieldMat.ambient.y = 1.0 * mod(pathAndCell.second.y, 2.0);
+        float boxRotationX = smoothstep(scene1FloorRotationX.x, scene1FloorRotationX.y, pathAndCell.second.x);
+        float boxRotationZ = smoothstep(scene1FloorRotationZ.x, scene1FloorRotationZ.y, pathAndCell.second.z);
+        vec3 boxRot = rotZ(rotX(pathAndCell.first, boxRotationX * PI), boxRotationZ * PI);
+        entity boxField = mBox(rotX(pathAndCell.first, 0.1), size, 0.1, boxFieldMat);
+        boxField.needNormals = true;  
 
-        entity e1 = mBox(r, vec3(1.0), 0.1, m1);
-        e1.needNormals = true;  
-
-        material m2 = material(
-            vec3(0.0, 1.0, 0.0),
-            1.0,
-
-            vec3(1.0, 1.0, 1.0),
-            0.2,
-
-            vec3(1.0, 1.0, 1.0),
-            10.0,
-            20.0,
-
-            0.2,
-            true,
-            1.5,
-            5.5,
-            textureOptions(
-                0,
-                vec3(1.5, 1.5, 1.5),
-                vec3(2.0, 2.0, 2.0),
-                false
-            )
-        );
-
-        entity e2 = mBox(rotZ(translate(r, vec3(0.5, 1.0, 1.0)), -0.7), vec3(1.0), 0.1, m2);
-        e2.needNormals = true;
-
-        material m3 = material(
-            vec3(0.0, 0.0, 1.0),
-            1.0,
-
-            vec3(1.0, 1.0, 1.0),
-            0.2,
-
-            vec3(1.0, 1.0, 1.0),
-            10.0,
-            20.0,
-
-            0.2,
-            true,
-            1.5,
-            5.5,
-            textureOptions(
-                0,
-                vec3(1.5, 1.5, 1.5),
-                vec3(2.0, 2.0, 2.0),
-                false
-            )
-        );
-
-        entity e3 = mBox(rotZ(translate(r, vec3(-0.5, -1.0, -1.0)), 0.7), vec3(1.0), 0.1, m3);
-        e3.needNormals = true;  
-        return opSmoothUnion(opSmoothUnion(e1, e2, 0.5, 0.0), e3, 0.5, 0.0);
+        entity guard = mBox(boxRot, size * 0.5, 0.1, boxFieldMat);
+        guard.dist = -guard.dist;
+        guard.dist = abs(guard.dist) + size.x * 0.1;
+        //return guard;
+        return boxField;
     }
  
 } 
@@ -696,7 +662,7 @@ hit raymarch(vec3 rayOrigin, vec3 rayDirection, vec2 uv) {
         h.last = min(h.entity.dist, h.last);
         if(h.entity.dist < rayThreshold) {
             if(h.entity.needNormals == true) {
-                vec2 eps = vec2(0.001, 0.0);
+                vec2 eps = vec2(0.002, 0.00);
                 h.normal = normalize(vec3(
                     scene(h.point + eps.xyy, uv).dist - h.entity.dist,
                     scene(h.point + eps.yxy, uv).dist - h.entity.dist,
@@ -802,7 +768,7 @@ vec4 background(vec2 uv) {
     int a = int(act);
     vec4 r = vec4(0.0);
     if(a == 1) {
-        r.xyz = vec3(0.0);
+        r.xyz = vec3(0.02);
         r.w = 1.0;
     }
 
@@ -814,10 +780,24 @@ vec3 generateTexture(int index, vec3 point, vec3 offset, vec3 scale) {
     switch(index) {
         case 1: {
             vec3 rp = vec3((point.x / scale.x) + offset.x, (point.y / scale.y) + offset.y, (point.z / scale.z) + offset.z);
-            r = textureCube(bogdan, rp, vec3(0.0, 0.0, 0.1)).xyz;
+            r = textureCube(bogdan, rp, vec3(0.0, 1.0, 0.0)).xyz;
             break;
         }
-       
+        case 2: {
+            vec3 rp = vec3((point.x / scale.x) + offset.x, (point.y / scale.y) + offset.y, (point.z / scale.z) + offset.z);
+            r = textureCube(nm, rp, vec3(0.0, 1.0, 0.0)).xyz;
+            break;
+        }
+        case 3: {
+            vec3 rp = vec3((point.x / scale.x) + offset.x, (point.y / scale.y) + offset.y, (point.z / scale.z) + offset.z);
+            r = textureCube(veins, rp, vec3(0.0, 1.0, 0.0)).xyz;
+            break;
+        }
+        case 4: {
+            vec3 rp = vec3((point.x / scale.x) + offset.x, (point.y / scale.y) + offset.y, (point.z / scale.z) + offset.z);
+            r = textureCube(veins, rp, vec3(0.0, 1.0, 0.0)).xyz;
+            break;
+        }
     }  
     return r;
 }
@@ -831,7 +811,7 @@ vec3 determinePixelBaseColor(float steps, float dist, entity e) {
 vec3 calculateNormal(in vec3 n, in entity e) {
     vec3 normal = n;
     if(e.material.textureOptions.normalMap == true) {
-        normal += generateTexture(e.material.textureOptions.index, e.point, e.material.textureOptions.offset, e.material.textureOptions.scale);
+        normal += generateTexture(e.material.textureOptions.index, e.point, e.material.textureOptions.offset, e.material.textureOptions.scale) * 1.7f;
     }
     return normal;
 }

@@ -30,6 +30,21 @@
             "type": "texture",
             "name": "bogdan",
             "file": "assets\\textures\\bogdan.png"
+        },
+        {
+            "type": "texture",
+            "name": "nm",
+            "file": "assets\\textures\\nm.png"
+        },
+        {
+            "type": "texture",
+            "name": "veins",
+            "file": "assets\\textures\\veins.png"
+        },
+        {
+            "type": "texture",
+            "name": "veinsnm",
+            "file": "assets\\textures\\veinsnm.png"
         }
     ],
     "tracks": [
@@ -87,6 +102,27 @@
             "name": {
                 "track": "light:position",
                 "variable": "lightPosition"
+            }
+        },
+        {
+            "type": "float3",
+            "name": {
+                "track": "scene1:vector",
+                "variable": "scene1Vector"
+            }
+        },
+        {
+            "type": "float2",
+            "name": {
+                "track": "scene1:floorRotationX",
+                "variable": "scene1FloorRotationX"
+            }
+        },
+        {
+            "type": "float2",
+            "name": {
+                "track": "scene1:floorRotationZ",
+                "variable": "scene1FloorRotationZ"
             }
         }
     ]
