@@ -463,6 +463,18 @@ vec3 rot(vec3 p, vec3 a) {
     return rotX(rotY(rotZ(p, a.z), a.y), a.x);
 }
 
+vec3 twistX(vec3 p, float angle) {
+    return rotX(p, p.x * angle);
+}
+
+vec3 twistY(vec3 p, float angle) {
+    return rotY(p, p.y * angle);
+}
+
+vec3 twistZ(vec3 p, float angle) {
+    return rotZ(p, p.z * angle);
+}
+
 vec3 translate(vec3 p, vec3 p1) {
     return p + (p1 * -1.0);
 }
