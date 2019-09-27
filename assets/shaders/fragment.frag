@@ -96,6 +96,10 @@ float rand(vec2 co){
     return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
 }
 
+float hash(vec2 p) {
+     return fract(sin(1.0 + dot(p, vec2(127.1, 311.7))) * 43758.545);
+}
+
 vec3 mod289(vec3 x) {
   return x - floor(x * (1.0 / 289.0)) * 289.0;
 }
@@ -321,10 +325,15 @@ float sdTorus(vec3 p, vec3 pos, vec2 t)
     return length(q)-t.y;
 }
 
-float sdCylinder(vec3 p, vec3 pos, vec3 c )
+float sdCylinder(vec3 p, vec3 c, float r)
 {
-    vec3 p1 = p + pos;
-    return length(p1.xz - c.xy) - c.z;
+    return length(p.xz - c.xy) - c.z - r;
+}
+
+float sdCappedCylinder(vec3 p, vec2 size, float r)
+{
+  vec2 d = abs(vec2(length(p.xz), p.y)) - size;
+  return min(max(d.x ,d.y), 0.0) + length(max(d, 0.0)) - r;
 }
 
 float sdRoundCone(in vec3 p, vec3 pos,in float r1, float r2, float h)
@@ -411,7 +420,7 @@ float sdMandlebulb(vec3 p, vec3 pos, float pwr, float dis, float bail, int it) {
 
 float displacement(vec3 p, vec3 m)
 {
-    return (m.x * sin(p.x)) + (m.y * sin(p.y)) + (m.z * sin(p.z));
+    return sin(m.x * p.x) * sin(m.y * p.y) * sin(m.z * p.z);
 }
 
 float impulse(float x, float k)
@@ -609,11 +618,29 @@ entity mTorus(vec3 path, vec2 dim, material material) {
     return m;
 }
 
+entity mCylinder(vec3 path, vec3 size, float r, material material) {
+    entity m;
+    vec3 p1 = path;
+    m.dist = sdCylinder(path, size, r);
+    m.point = p1;
+    m.material = material;
+    return m;
+}
+
+entity mCappedCylinder(vec3 path, vec2 size, float r, material material) {
+    entity m;
+    vec3 p1 = path;
+    m.dist = sdCappedCylinder(path, size, r);
+    m.point = p1;
+    m.material = material;
+    return m;
+}
+
 entity scene(vec3 path, vec2 uv)
 {   
     int a = int(act);
     if(a == 1) {
-        vec3 r = rot(path, vec3(time));
+        vec3 r = rot(path, vec3(0.0, time, 0.0));
         material m1 = material(
             vec3(1.0, 0.0, 0.0),
             1.0,
@@ -622,12 +649,12 @@ entity scene(vec3 path, vec2 uv)
             0.2,
 
             vec3(1.0, 1.0, 1.0),
-            10.0,
-            20.0,
+            20.5,
+            60.0,
 
-            0.2,
-            true,
-            1.5,
+            1.2,
+            false,
+            2.5,
             5.5,
             textureOptions(
                 0,
@@ -636,8 +663,11 @@ entity scene(vec3 path, vec2 uv)
                 false
             )
         );
-
-        entity e1 = mBox(r, vec3(1.0), 0.1, m1);
+        vec3 stemPos = r;
+        stemPos.xz += 0.5 * vec2(sin(stemPos.y * 0.2 - time * 2.0), cos(stemPos.y * 0.2 -  time * 3.5));
+        
+        entity e1 = mCappedCylinder(stemPos, vec2(10.0, 150.), 0.0, m1);
+        //entity e1 = mBox(stemPos, vec3(10.0, 30.0, 10.0), 0.1, m1);
         e1.needNormals = true;  
 
         material m2 = material(
@@ -664,6 +694,7 @@ entity scene(vec3 path, vec2 uv)
         );
 
         entity e2 = mBox(rotZ(translate(r, vec3(0.5, 1.0, 1.0)), -0.7), vec3(1.0), 0.1, m2);
+        
         e2.needNormals = true;
 
         material m3 = material(
@@ -691,6 +722,7 @@ entity scene(vec3 path, vec2 uv)
 
         entity e3 = mBox(rotZ(translate(r, vec3(-0.5, -1.0, -1.0)), 0.7), vec3(1.0), 0.1, m3);
         e3.needNormals = true;  
+        return e1;
         return opSmoothUnion(opSmoothUnion(e1, e2, 0.5, 0.0), e3, 0.5, 0.0);
     }
  
@@ -835,7 +867,7 @@ vec3 generateTexture(int index, vec3 point, vec3 offset, vec3 scale) {
 }
 
 vec3 determinePixelBaseColor(float steps, float dist, entity e) {
-    vec3 base = vec3((1.0 - smoothstep(0.0, rayMaxSteps, steps)));
+    vec3 base = vec3(step(steps, rayMaxSteps));
     base *= generateTexture(e.material.textureOptions.index, e.point, e.material.textureOptions.offset, e.material.textureOptions.scale);
     return base;
 }
