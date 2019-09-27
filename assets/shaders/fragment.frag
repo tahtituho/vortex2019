@@ -804,7 +804,9 @@ vec3 generateTexture(int index, vec3 point, vec3 offset, vec3 scale) {
 
 vec3 determinePixelBaseColor(float steps, float dist, entity e) {
     vec3 base = vec3((1.0 - smoothstep(0.0, rayMaxSteps, steps)));
+    if(e.material.textureOptions.normalMap == false) {
     base *= generateTexture(e.material.textureOptions.index, e.point, e.material.textureOptions.offset, e.material.textureOptions.scale);
+    }
     return base;
 }
 
