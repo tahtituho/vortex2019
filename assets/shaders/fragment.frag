@@ -23,6 +23,7 @@ uniform vec2 scene1FloorRotationZ;
 uniform sampler2D bogdan;
 uniform sampler2D nm;
 uniform sampler2D veins;
+uniform sampler2D veinsnm;
 
 in float[12] sines;
 in float[12] coses;
@@ -609,24 +610,24 @@ entity scene(vec3 path, vec2 uv)
     if(a == 1) {
         vec3 modPath = rotY(path, time / 2);
         material boxFieldMat = material(
-            vec3(0.5, 0.5, 0.5),
-            0.3,
+            vec3(0.0, 0.0, 1.0),
+            1.0,
 
-            vec3(1.0, 1.0, 1.0),
-            0.5,
+            vec3(0.0, 0.0, 1.0),
+            50.5,
 
-            vec3(1.0, 1.0, 1.0),
-            0.005,
-            20.1,
+            vec3(1.0, 0.0, 0.0),
+            1.5,
+            10.1,
 
-            1.2,
+            0.1,
             true,
-            0.5,
+            2.5,
             10.0,
             textureOptions(
-                3,
+                2,
                 vec3(1.5, 1.5, 1.5),
-                vec3(2.0, 2.0, 2.0),
+                vec3(2.0, 1.0, 2.0),
                 true 
             )
         );
@@ -795,7 +796,7 @@ vec3 generateTexture(int index, vec3 point, vec3 offset, vec3 scale) {
         }
         case 4: {
             vec3 rp = vec3((point.x / scale.x) + offset.x, (point.y / scale.y) + offset.y, (point.z / scale.z) + offset.z);
-            r = textureCube(veins, rp, vec3(0.0, 1.0, 0.0)).xyz;
+            r = textureCube(veinsnm, rp, vec3(0.0, 1.0, 0.0)).xyz;
             break;
         }
     }  
@@ -805,7 +806,7 @@ vec3 generateTexture(int index, vec3 point, vec3 offset, vec3 scale) {
 vec3 determinePixelBaseColor(float steps, float dist, entity e) {
     vec3 base = vec3((1.0 - smoothstep(0.0, rayMaxSteps, steps)));
     if(e.material.textureOptions.normalMap == false) {
-    base *= generateTexture(e.material.textureOptions.index, e.point, e.material.textureOptions.offset, e.material.textureOptions.scale);
+        base *= generateTexture(e.material.textureOptions.index, e.point, e.material.textureOptions.offset, e.material.textureOptions.scale);
     }
     return base;
 }

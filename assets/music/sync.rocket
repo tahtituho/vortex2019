@@ -24,11 +24,11 @@ color="ff4fb292">
 	</track>
 	<track name="camera:position.y" folded="0" muteKeyCount="0"
 color="ff4f71b2">
-		<key row="0" value="4.400000" interpolation="0" />
+		<key row="0" value="5.000004" interpolation="0" />
 	</track>
 	<track name="camera:position.z" folded="0" muteKeyCount="0"
 color="ff8850b2">
-		<key row="0" value="-5.299995" interpolation="0" />
+		<key row="0" value="1.200002" interpolation="0" />
 	</track>
 	<track name="camera:lookat.x" folded="0" muteKeyCount="0"
 color="ffb25091">
@@ -60,12 +60,11 @@ color="ff4f71b2">
 	</track>
 	<track name="light:position.y" folded="0" muteKeyCount="0"
 color="ff8850b2">
-		<key row="0" value="5.000000" interpolation="0" />
-		<key row="176" value="20.000000" interpolation="0" />
+		<key row="0" value="3.199997" interpolation="0" />
 	</track>
 	<track name="light:position.z" folded="0" muteKeyCount="0"
 color="ffb25091">
-		<key row="0" value="10.000000" interpolation="0" />
+		<key row="0" value="2.299998" interpolation="0" />
 	</track>
 	<track name="scene1:vector.x" folded="0" muteKeyCount="0"
 color="ffb27474">
