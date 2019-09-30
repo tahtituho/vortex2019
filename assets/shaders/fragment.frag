@@ -602,16 +602,18 @@ entity scene(vec3 path, vec2 uv)
     int a = int(act);
     if(a == 1) {
         vec3 r = rot(path, vec3(time));
+        vec3Tuple rr = repeat(r, vec3(10.0, 10.0, 10.0));
+        //r = rr.first;
         material m1 = material(
             vec3(1.0, 0.0, 0.0),
             1.0,
 
-            vec3(1.0, 1.0, 1.0),
-            0.2,
+            vec3(1.0, 0.0, 0.0),
+            2.2,
 
             vec3(1.0, 1.0, 1.0),
-            10.0,
-            20.0,
+            50.0,
+            100.0,
 
             0.2,
             true,
@@ -632,12 +634,12 @@ entity scene(vec3 path, vec2 uv)
             vec3(0.0, 1.0, 0.0),
             1.0,
 
-            vec3(1.0, 1.0, 1.0),
-            0.2,
+            vec3(0.0, 1.0, 0.0),
+            2.2,
 
             vec3(1.0, 1.0, 1.0),
-            10.0,
-            20.0,
+            50.0,
+            100.0,
 
             0.2,
             true,
@@ -658,16 +660,16 @@ entity scene(vec3 path, vec2 uv)
             vec3(0.0, 0.0, 1.0),
             1.0,
 
-            vec3(1.0, 1.0, 1.0),
-            0.2,
+            vec3(0.0, 0.0, 1.0),
+            2.2,
 
             vec3(1.0, 1.0, 1.0),
-            10.0,
-            20.0,
+            50.0,
+            100.0,
 
             0.2,
             true,
-            1.5,
+            2.5,
             5.5,
             textureOptions(
                 0,
@@ -676,7 +678,7 @@ entity scene(vec3 path, vec2 uv)
                 false
             )
         );
-
+        
         entity e3 = mBox(rotZ(translate(r, vec3(-0.5, -1.0, -1.0)), 0.7), vec3(1.0), 0.1, m3);
         e3.needNormals = true;  
         return opSmoothUnion(opSmoothUnion(e1, e2, 0.5, 0.0), e3, 0.5, 0.0);
