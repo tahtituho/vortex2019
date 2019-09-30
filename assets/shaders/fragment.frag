@@ -640,17 +640,17 @@ entity scene(vec3 path, vec2 uv)
 {   
     int a = int(act);
     if(a == 1) {
-        vec3 r = rot(path, vec3(0.0, time, 0.0));
+        vec3 r = rot(path, vec3(time / 2.5, time / 5.0, 0.0));
         material m1 = material(
             vec3(1.0, 0.0, 0.0),
             1.0,
 
-            vec3(1.0, 1.0, 1.0),
-            0.2,
+            vec3(1.0, 0.0, 0.0),
+            2.2,
 
             vec3(1.0, 1.0, 1.0),
-            20.5,
-            60.0,
+            200.0,
+            150.0,
 
             1.2,
             false,
@@ -664,10 +664,9 @@ entity scene(vec3 path, vec2 uv)
             )
         );
         vec3 stemPos = r;
-        stemPos.xz += 0.5 * vec2(sin(stemPos.y * 0.2 - time * 2.0), cos(stemPos.y * 0.2 -  time * 3.5));
-        
-        entity e1 = mCappedCylinder(stemPos, vec2(10.0, 150.), 0.0, m1);
-        //entity e1 = mBox(stemPos, vec3(10.0, 30.0, 10.0), 0.1, m1);
+        stemPos.xz += 1.5 * vec2(sin(stemPos.y * 0.6 - time * 5.0), cos(stemPos.y * 0.2 -  time * 3.5));
+
+        entity e1 = mCappedCylinder(stemPos, vec2(20.0, 200.0), 0.5, m1);
         e1.needNormals = true;  
 
         material m2 = material(
