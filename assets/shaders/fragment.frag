@@ -833,7 +833,7 @@ vec3 determinePixelBaseColor(float steps, float dist, entity e) {
 vec3 calculateNormal(in vec3 n, in entity e) {
     vec3 normal = n;
     if(e.material.textureOptions.normalMap == true) {
-        normal += generateTexture(e.material.textureOptions.index, e.point, e.material.textureOptions.offset, e.material.textureOptions.scale);
+        normal *= generateTexture(e.material.textureOptions.index, e.point, e.material.textureOptions.offset, e.material.textureOptions.scale);
     }
     return normal;
 }
