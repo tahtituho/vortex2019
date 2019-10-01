@@ -16,6 +16,9 @@ uniform float rayThreshold;
 
 uniform vec3 lightPosition;
 
+uniform vec3 fogColor;
+uniform float fogIntensity;
+
 uniform sampler2D bogdan;
 
 in float[12] sines;
@@ -857,6 +860,10 @@ vec3 calculateLights(in vec3 normal, in vec3 eye, in vec3 lp, in vec3 origin, en
     return lights;
 }
 
+vec3 fog(vec3 original, vec3 color, float dist, float b) {
+    return mix(original, color, 1.0 - exp(-dist * b));
+}
+
 vec3 processColor(hit h, vec3 rd, vec3 eye, vec2 uv, vec3 lp)
 {
     vec4 bg = (h.steps >= rayMaxSteps) ? background(uv) : vec4(0.0);
@@ -867,7 +874,9 @@ vec3 processColor(hit h, vec3 rd, vec3 eye, vec2 uv, vec3 lp)
     vec3 result = base;
     result *= lights;
     
-    result = mix(result, bg.rgb, h.last * bg.w);
+    result = fog(result, fogColor, h.dist, fogIntensity);
+    result = mix(result, bg.rgb, bg.w);
+   
     float gamma = 2.2;
     vec3 correct = pow(result, vec3(1.0 / gamma));
    

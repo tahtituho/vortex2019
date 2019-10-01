@@ -88,6 +88,20 @@
                 "track": "light:position",
                 "variable": "lightPosition"
             }
+        },
+        {
+            "type": "float3",
+            "name": {
+                "track": "fog:color",
+                "variable": "fogColor"
+            }
+        },
+        {
+            "type": "float1",
+            "name": {
+                "track": "fog:intensity",
+                "variable": "fogIntensity"
+            }
         }
     ]
 }
