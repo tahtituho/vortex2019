@@ -607,6 +607,7 @@ entity scene(vec3 path, vec2 uv)
         vec3 r = rot(path, vec3(time));
         vec3Tuple rr = repeat(r, vec3(10.0, 10.0, 10.0));
         //r = rr.first;
+        //r = path;
         material m1 = material(
             vec3(1.0, 0.0, 0.0),
             1.0,
@@ -684,7 +685,11 @@ entity scene(vec3 path, vec2 uv)
         
         entity e3 = mBox(rotZ(translate(r, vec3(-0.5, -1.0, -1.0)), 0.7), vec3(1.0), 0.1, m3);
         e3.needNormals = true;  
-        return opSmoothUnion(opSmoothUnion(e1, e2, 0.5, 0.0), e3, 0.5, 0.0);
+        
+        entity comb = opSmoothUnion(opSmoothUnion(e1, e2, 0.5, 0.0), e3, 0.5, 0.0);
+        //comb.dist += displacement(r, vec3(3.0));
+        comb.needNormals = true;
+        return comb;
     }
  
 } 
@@ -828,7 +833,7 @@ vec3 generateTexture(int index, vec3 point, vec3 offset, vec3 scale) {
 }
 
 vec3 determinePixelBaseColor(float steps, float dist, entity e) {
-    vec3 base = vec3(1.0 - smoothstep(0.0, rayMaxSteps, steps));
+    vec3 base = vec3(1.0 - smoothstep(10.0, rayMaxSteps, steps));
     if(e.material.textureOptions.normalMap == false) {
         base *= generateTexture(e.material.textureOptions.index, e.point, e.material.textureOptions.offset, e.material.textureOptions.scale);
     }
