@@ -414,7 +414,7 @@ float sdMandlebulb(vec3 p, vec3 pos, float pwr, float dis, float bail, int it) {
 
 float displacement(vec3 p, vec3 m)
 {
-    return (m.x * sin(p.x)) + (m.y * sin(p.y)) + (m.z * sin(p.z));
+    return sin(m.x * p.x) * sin(m.y * p.y) * sin(m.z * p.z);
 }
 
 float impulse(float x, float k)
