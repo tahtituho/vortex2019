@@ -368,6 +368,41 @@ float sdHexPrism(vec3 p, vec2 h)
     return max(q.z - h.y, max((q.x * 0.866025 + q.y * 0.5), q.y) - h.x);
 }
 
+float sdPyramid(vec3 p, float h)
+{
+    float m2 = h * h + 0.25;
+
+    p.xz = abs(p.xz);
+    p.xz = (p.z > p.x) ? p.zx : p.xz;
+    p.xz -= 0.5;
+
+    vec3 q = vec3(p.z, h * p.y - 0.5 * p.x, h * p.x + 0.5 * p.y);
+
+    float s = max(-q.x, 0.0);
+    float t = clamp((q.y - 0.5 * p.z) / (m2 + 0.25), 0.0, 1.0);
+
+    float a = m2 * (q.x + s) * (q.x + s) + q.y * q.y;
+    float b = m2 * (q.x + 0.5 * t) * (q.x + 0.5 * t) + (q.y - m2 * t) * (q.y - m2 * t);
+
+    float d2 = min(q.y, -q.x * m2 - q.y * 0.5) > 0.0 ? 0.0 : min(a,b);
+
+    return sqrt((d2 + q.z * q.z) / m2) * sign(max(q.z, -p.y));
+}
+
+float sdOctahedron(vec3 p, float s)
+{
+    p = abs(p);
+    float m = p.x + p.y + p.z - s;
+    vec3 q;
+    if(3.0 * p.x < m ) q = p.xyz;
+    else if(3.0 * p.y < m ) q = p.yzx;
+    else if(3.0 * p.z < m ) q = p.zxy;
+    else return m*0.57735027;
+
+    float k = clamp(0.5 * (q.z - q.y + s), 0.0, s); 
+    return length(vec3(q.x, q.y - s + k, q.z - k)); 
+}
+
 entity mMandleBox(vec3 path, material material, float size, float scale, float minrad, float limit, float factor, int iterations, float foldingLimit, float radClamp1, float radClamp2)
 {
     vec4 scalev = vec4(size) / minrad;
@@ -647,6 +682,24 @@ entity mHexPrim(vec3 path, vec2 size, material material) {
     return m;
 }
 
+entity mPyramid(vec3 path, float height, material material) {
+    entity m;
+    vec3 p1 = path;
+    m.dist = sdPyramid(path, height);
+    m.point = p1;
+    m.material = material;
+    return m;
+}
+
+entity mOctahedron(vec3 path, float height, material material) {
+    entity m;
+    vec3 p1 = path;
+    m.dist = sdOctahedron(path, height);
+    m.point = p1;
+    m.material = material;
+    return m;
+}
+
 entity scene(vec3 path, vec2 uv)
 {   
     int a = int(act);
@@ -759,8 +812,11 @@ entity scene(vec3 path, vec2 uv)
         );
         vec3 r = rot(path, vec3(time / 2.5, time / 5.0, 0.0));
         entity e1 = mHexPrim(r, vec2(3.0, 5.0), m1);
+        entity e2 = mOctahedron(r / 5.0, 1.0, m1);
+        e2.dist *= 5.0;
         e1.needNormals = true;
-        return e1;
+        e2.needNormals = true;
+        return e2;
     }
  
 } 
