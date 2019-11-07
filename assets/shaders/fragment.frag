@@ -221,15 +221,12 @@ float opSmoothSubtraction(float d1, float d2, float k) {
 }
 
 float opSmoothIntersection(float d1, float d2, float k) {
-    float h = clamp( 0.5 - 0.5*(d2-d1)/k, 0.0, 1.0 );
-    return mix(d2, d1, h) + k*h*(1.0-h);
+    float h = clamp(0.5 - 0.5 * (d2 - d1) / k, 0.0, 1.0 );
+    return mix(d2, d1, h) + k * h * (1.0 - h);
 }
 
 entity opSmoothUnion(entity m1, entity m2, float k, float threshold) {
     float h = opSmoothUnion(m1.dist, m2.dist, k);
-    // Adding a 0.1 fixes the union, could be that
-    // the operation changes the original shape minimally
-   
     if (smoothstep(m1.dist, m2.dist, h + threshold) > 0.5) {
         m2.dist = h;
         return m2;
@@ -242,8 +239,6 @@ entity opSmoothUnion(entity m1, entity m2, float k, float threshold) {
 
 entity opSmoothSubtraction(entity m1, entity m2, float k, float threshold) {
     float h = opSmoothSubtraction(m1.dist, m2.dist, k);
-    // Adding a 0.1 fixes the union, could be that
-    // the operation changes the original shape minimally
     if (smoothstep(m1.dist, m2.dist, h + threshold) > 0.5) {
         m2.dist = h;
         return m2;
@@ -256,8 +251,6 @@ entity opSmoothSubtraction(entity m1, entity m2, float k, float threshold) {
 
 entity opSmoothIntersection(entity m1, entity m2, float k, float threshold) {
     float h = opSmoothIntersection(m1.dist, m2.dist, k);
-    // Adding a 0.1 fixes the union, could be that
-    // the operation changes the original shape minimally
     if (smoothstep(m1.dist, m2.dist, h + threshold) > 0.5) {
         m2.dist = h;
         return m2;
@@ -618,87 +611,120 @@ vec3 boxFold(vec3 z, vec3 r) {
     return z1;
 }
 
-entity mPlane(vec3 p, vec3 pos, vec4 n, material material)
+entity mPlane(vec3 path, vec3 pos, vec4 n, float scale, material material)
 {
     entity m;
-    vec3 p1 = p;
-    m.dist = sdPlane(p, pos, n);
+    vec3 p1 = path / scale;
+    m.dist = sdPlane(p1, pos, n) * scale;
     m.point = p1;
     m.material = material;
     return m;
 }
 
-entity mSphere(vec3 path, float radius, material material) {
+entity mSphere(vec3 path, float radius, float scale, material material) {
     entity m;
-    vec3 p1 = path;
-    m.dist = sdSphere(path, vec3(0.0), radius);
+    vec3 p1 = path / scale;
+    m.dist = sdSphere(p1, vec3(0.0), radius) * scale;
     m.point = p1;
     m.material = material;
     return m;
 }
 
-entity mBox(vec3 path, vec3 size, float r, material material) {
+entity mBox(vec3 path, vec3 size, float r, float scale, material material) {
     entity m;
-    vec3 p1 = path;
-    m.dist = sdBox(path, vec3(0.0), size, r);
+    vec3 p1 = path / scale;
+    m.dist = sdBox(p1, vec3(0.0), size, r) * scale;
     m.point = p1;
     m.material = material;
     return m;
 }
 
-entity mTorus(vec3 path, vec2 dim, material material) {
+entity mTorus(vec3 path, vec2 dim, float scale, material material) {
     entity m;
-    vec3 p1 = path;
-    m.dist = sdTorus(path, vec3(0.0), dim);
+    vec3 p1 = path / scale;
+    m.dist = sdTorus(p1, vec3(0.0), dim) * scale;
     m.point = p1;
     m.material = material;
     return m;
 }
 
-entity mCylinder(vec3 path, vec3 size, float r, material material) {
+entity mCylinder(vec3 path, vec3 size, float r, float scale, material material) {
     entity m;
-    vec3 p1 = path;
-    m.dist = sdCylinder(path, size, r);
+    vec3 p1 = path / scale;
+    m.dist = sdCylinder(p1, size, r) * scale;
     m.point = p1;
     m.material = material;
     return m;
 }
 
-entity mCappedCylinder(vec3 path, vec2 size, float r, material material) {
+entity mCappedCylinder(vec3 path, vec2 size, float r, float scale, material material) {
     entity m;
-    vec3 p1 = path;
-    m.dist = sdCappedCylinder(path, size, r);
+    vec3 p1 = path / scale;
+    m.dist = sdCappedCylinder(p1, size, r) * scale;
     m.point = p1;
     m.material = material;
     return m;
 }
 
-entity mHexPrim(vec3 path, vec2 size, material material) {
+entity mHexPrim(vec3 path, vec2 size, float scale, material material) {
     entity m;
-    vec3 p1 = path;
-    m.dist = sdHexPrism(path, size);
+    vec3 p1 = path / scale;
+    m.dist = sdHexPrism(p1, size) * scale;
     m.point = p1;
     m.material = material;
     return m;
 }
 
-entity mPyramid(vec3 path, float height, material material) {
+entity mPyramid(vec3 path, float height, float scale, material material) {
     entity m;
-    vec3 p1 = path;
-    m.dist = sdPyramid(path, height);
+    vec3 p1 = path / scale;
+    m.dist = sdPyramid(p1, height) * scale;
     m.point = p1;
     m.material = material;
     return m;
 }
 
-entity mOctahedron(vec3 path, float height, material material) {
+entity mOctahedron(vec3 path, float height, float scale, material material) {
     entity m;
-    vec3 p1 = path;
-    m.dist = sdOctahedron(path, height);
+    vec3 p1 = path / scale;
+    m.dist = sdOctahedron(p1, height) * scale;
     m.point = p1;
     m.material = material;
     return m;
 }
+
+entity tunnelSegment(vec3 path, float r1, float r2, float h, float notch, int numberOfNotches, float scale) {
+    material m1 = material(
+        vec3(0.0, 0.0, 1.0),
+        1.0,
+
+        vec3(1.0, 1.0, 1.0),
+        0.2,
+
+        vec3(1.0, 1.0, 1.0),
+        10.0,
+        20.0,
+
+        0.2,
+        true,
+        1.5,
+        2.0,
+        textureOptions(
+            0,
+            vec3(1.5, 1.5, 1.5),
+            vec3(2.0, 2.0, 2.0),
+            false
+        )
+    );
+    entity cs1 = mCappedCylinder(path, vec2(r1, h), 0.0, scale, m1);
+    cs1.needNormals = true;
+    entity cs2 = mCappedCylinder(path, vec2(r2, h + 1.0), 0.0, scale, m1);
+    cs1.needNormals = true;
+    vec2Tuple notchBoxes = repeatPolar(path.xz, numberOfNotches);
+    entity e3 = mBox(vec3(notchBoxes.first, path.y) - vec3(r2, 0.0, 0.0), vec3(notch), 0.0, 1.0, m1);
+    return opSmoothSubtraction(e3, opSmoothSubtraction(cs2, cs1, 0.0, 0.0), 0.0, 0.0);
+
+}  
 
 entity scene(vec3 path, vec2 uv)
 {   
@@ -730,7 +756,7 @@ entity scene(vec3 path, vec2 uv)
         vec3 stemPos = r;
         stemPos.xz += 1.5 * vec2(sin(stemPos.y * 0.6 - time * 5.0), cos(stemPos.y * 0.2 -  time * 3.5));
 
-        entity e1 = mCappedCylinder(stemPos, vec2(20.0, 200.0), 0.5, m1);
+        entity e1 = mCappedCylinder(stemPos, vec2(20.0, 200.0), 0.5, 1.0, m1);
         e1.needNormals = true;  
         e1.dist *= 0.5;
         material m2 = material(
@@ -756,7 +782,7 @@ entity scene(vec3 path, vec2 uv)
             )
         );
 
-        entity e2 = mBox(rotZ(translate(r, vec3(0.5, 1.0, 1.0)), -0.7), vec3(1.0), 0.1, m2);
+        entity e2 = mBox(rotZ(translate(r, vec3(0.5, 1.0, 1.0)), -0.7), vec3(1.0), 0.1, 1.0, m2);
         
         e2.needNormals = true;
 
@@ -783,7 +809,7 @@ entity scene(vec3 path, vec2 uv)
             )
         );
         
-        entity e3 = mBox(rotZ(translate(r, vec3(-0.5, -1.0, -1.0)), 0.7), vec3(1.0), 0.1, m3);
+        entity e3 = mBox(rotZ(translate(r, vec3(-0.5, -1.0, -1.0)), 0.7), vec3(1.0), 0.1, 1.0, m3);
         e3.needNormals = true;  
         return opSmoothUnion(opSmoothUnion(e1, e2, 0.5, 0.0), e3, 0.5, 0.0);
     }
@@ -811,12 +837,15 @@ entity scene(vec3 path, vec2 uv)
             )
         );
         vec3 r = rot(path, vec3(time / 2.5, time / 5.0, 0.0));
-        entity e1 = mHexPrim(r, vec2(3.0, 5.0), m1);
-        entity e2 = mOctahedron(r / 5.0, 1.0, m1);
-        e2.dist *= 5.0;
+        entity e1 = mHexPrim(r, vec2(3.0, 5.0), 1.5, m1);
+        entity e2 = mOctahedron(r, 5.0, 1.0, m1);
         e1.needNormals = true;
         e2.needNormals = true;
-        return e2;
+        return e1;
+    }
+    else if(a == 3) {
+        vec3 r = rot(path, vec3(time / 2.5, time / 5.0, 0.0));
+        return tunnelSegment(r, 2.0, 1.5, 0.2, 0.25, 8, 1.0);
     }
  
 } 
