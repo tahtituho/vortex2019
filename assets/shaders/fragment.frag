@@ -16,6 +16,9 @@ uniform float rayThreshold;
 
 uniform vec3 lightPosition;
 
+uniform vec3 fogColor;
+uniform float fogIntensity;
+
 uniform sampler2D bogdan;
 
 in float[12] sines;
@@ -668,7 +671,7 @@ entity scene(vec3 path, vec2 uv)
 
         entity e1 = mCappedCylinder(stemPos, vec2(20.0, 200.0), 0.5, m1);
         e1.needNormals = true;  
-
+        e1.dist *= 0.5;
         material m2 = material(
             vec3(0.0, 1.0, 0.0),
             1.0,
@@ -718,10 +721,9 @@ entity scene(vec3 path, vec2 uv)
                 false
             )
         );
-
+        
         entity e3 = mBox(rotZ(translate(r, vec3(-0.5, -1.0, -1.0)), 0.7), vec3(1.0), 0.1, m3);
         e3.needNormals = true;  
-        return e1;
         return opSmoothUnion(opSmoothUnion(e1, e2, 0.5, 0.0), e3, 0.5, 0.0);
     }
  
@@ -737,7 +739,7 @@ hit raymarch(vec3 rayOrigin, vec3 rayDirection, vec2 uv) {
         h.entity = scene(h.point, uv);
         h.steps += 1.0;
         h.last = min(h.entity.dist, h.last);
-        if(h.entity.dist < rayThreshold) {
+        if(abs(h.entity.dist) < rayThreshold) {
             if(h.entity.needNormals == true) {
                 vec2 eps = vec2(0.001, 0.0);
                 h.normal = normalize(vec3(
@@ -866,15 +868,17 @@ vec3 generateTexture(int index, vec3 point, vec3 offset, vec3 scale) {
 }
 
 vec3 determinePixelBaseColor(float steps, float dist, entity e) {
-    vec3 base = vec3(1.0 - smoothstep(-rayMaxSteps, rayMaxSteps, steps));
-    base *= generateTexture(e.material.textureOptions.index, e.point, e.material.textureOptions.offset, e.material.textureOptions.scale);
+    vec3 base = vec3(1.0 - smoothstep(0.0, rayMaxSteps, steps));
+    if(e.material.textureOptions.normalMap == false) {
+        base *= generateTexture(e.material.textureOptions.index, e.point, e.material.textureOptions.offset, e.material.textureOptions.scale);
+    }
     return base;
 }
 
 vec3 calculateNormal(in vec3 n, in entity e) {
     vec3 normal = n;
     if(e.material.textureOptions.normalMap == true) {
-        normal += generateTexture(e.material.textureOptions.index, e.point, e.material.textureOptions.offset, e.material.textureOptions.scale);
+        normal *= generateTexture(e.material.textureOptions.index, e.point, e.material.textureOptions.offset, e.material.textureOptions.scale);
     }
     return normal;
 }
@@ -896,6 +900,10 @@ vec3 calculateLights(in vec3 normal, in vec3 eye, in vec3 lp, in vec3 origin, en
     return lights;
 }
 
+vec3 fog(vec3 original, vec3 color, float dist, float b) {
+    return mix(original, color, 1.0 - exp(-dist * b));
+}
+
 vec3 processColor(hit h, vec3 rd, vec3 eye, vec2 uv, vec3 lp)
 {
     vec4 bg = (h.steps >= rayMaxSteps) ? background(uv) : vec4(0.0);
@@ -906,7 +914,9 @@ vec3 processColor(hit h, vec3 rd, vec3 eye, vec2 uv, vec3 lp)
     vec3 result = base;
     result *= lights;
     
-    result = mix(result, bg.rgb, h.last * bg.w);
+    result = fog(result, fogColor, h.dist, fogIntensity);
+    result = mix(result, bg.rgb, bg.w);
+   
     float gamma = 2.2;
     vec3 correct = pow(result, vec3(1.0 / gamma));
    
