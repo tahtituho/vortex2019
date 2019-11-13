@@ -362,11 +362,10 @@ float sdCapsule(vec3 p, vec3 pos, vec3 a, vec3 b, float r)
     return length( pa - ba*h ) - r;
 }
 
-float sdHexPrism(vec3 p, vec3 pos, vec2 h)
+float sdHexPrism(vec3 p, vec2 h)
 {
-    vec3 p1 = p + pos;
-    vec3 q = abs(p1);
-    return max(q.z-h.y,max((q.x*0.866025+q.y*0.5),q.y)-h.x);
+    vec3 q = abs(p);
+    return max(q.z - h.y, max((q.x * 0.866025 + q.y * 0.5), q.y) - h.x);
 }
 
 entity mMandleBox(vec3 path, material material, float size, float scale, float minrad, float limit, float factor, int iterations, float foldingLimit, float radClamp1, float radClamp2)
@@ -639,6 +638,15 @@ entity mCappedCylinder(vec3 path, vec2 size, float r, material material) {
     return m;
 }
 
+entity mHexPrim(vec3 path, vec2 size, material material) {
+    entity m;
+    vec3 p1 = path;
+    m.dist = sdHexPrism(path, size);
+    m.point = p1;
+    m.material = material;
+    return m;
+}
+
 entity scene(vec3 path, vec2 uv)
 {   
     int a = int(act);
@@ -725,6 +733,34 @@ entity scene(vec3 path, vec2 uv)
         entity e3 = mBox(rotZ(translate(r, vec3(-0.5, -1.0, -1.0)), 0.7), vec3(1.0), 0.1, m3);
         e3.needNormals = true;  
         return opSmoothUnion(opSmoothUnion(e1, e2, 0.5, 0.0), e3, 0.5, 0.0);
+    }
+    else if(a == 2) {
+        material m1 = material(
+            vec3(0.0, 0.0, 1.0),
+            1.0,
+
+            vec3(1.0, 1.0, 1.0),
+            0.2,
+
+            vec3(1.0, 1.0, 1.0),
+            10.0,
+            20.0,
+
+            0.2,
+            true,
+            1.5,
+            2.0,
+            textureOptions(
+                0,
+                vec3(1.5, 1.5, 1.5),
+                vec3(2.0, 2.0, 2.0),
+                false
+            )
+        );
+        vec3 r = rot(path, vec3(time / 2.5, time / 5.0, 0.0));
+        entity e1 = mHexPrim(r, vec2(3.0, 5.0), m1);
+        e1.needNormals = true;
+        return e1;
     }
  
 } 
