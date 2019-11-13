@@ -695,20 +695,20 @@ entity mOctahedron(vec3 path, float height, float scale, material material) {
 
 entity tunnelSegment(vec3 path, float r1, float r2, float h, float notch, int numberOfNotches, float scale) {
     material m1 = material(
-        vec3(0.0, 0.0, 1.0),
-        1.0,
-
-        vec3(1.0, 1.0, 1.0),
-        0.2,
-
-        vec3(1.0, 1.0, 1.0),
-        10.0,
+        vec3(1.0, 1.0, 0.0),
         20.0,
 
-        0.2,
+        vec3(0.3, 0.3, 0.0),
+        100.0,
+
+        vec3(1.0, 1.0, 1.0),
+        50000.0,
+        80.0,
+
+        0.3,
         true,
-        1.5,
-        2.0,
+        0.25,
+        10.0,
         textureOptions(
             0,
             vec3(1.5, 1.5, 1.5),
@@ -722,9 +722,15 @@ entity tunnelSegment(vec3 path, float r1, float r2, float h, float notch, int nu
     cs1.needNormals = true;
     vec2Tuple notchBoxes = repeatPolar(path.xz, numberOfNotches);
     entity e3 = mBox(vec3(notchBoxes.first, path.y) - vec3(r2, 0.0, 0.0), vec3(notch), 0.0, 1.0, m1);
-    return opSmoothSubtraction(e3, opSmoothSubtraction(cs2, cs1, 0.0, 0.0), 0.0, 0.0);
+    e3.needNormals = true;
+    return opSmoothSubtraction(e3, opSmoothSubtraction(cs2, cs1, 0.05, 0.5), 0.05, 0.5);
 
 }  
+
+entity tunnnel(vec3 path) {
+    vec3Tuple repeated = repeat(path, vec3(0.0, 1.0, 0.0));
+    return tunnelSegment(rot(repeated.first, vec3(0.0, mod(repeated.second.y, 8) * (time / 20.0), 0.0)), 2.0, 1.5, 0.2, 0.25, 6 + int(mod(repeated.second.y, 5) * 2.0), 1.0);   
+}
 
 entity scene(vec3 path, vec2 uv)
 {   
@@ -844,8 +850,11 @@ entity scene(vec3 path, vec2 uv)
         return e1;
     }
     else if(a == 3) {
-        vec3 r = rot(path, vec3(time / 2.5, time / 5.0, 0.0));
-        return tunnelSegment(r, 2.0, 1.5, 0.2, 0.25, 8, 1.0);
+        vec3 r = rot(path, vec3(PI / 2.0, 0.0, time / 10.0));
+        
+        entity e = tunnnel(r - vec3(0.0, time / .5, 0.0));
+        //e.dist += (displacement(r, vec3(0.10, 0.10, 0.1)) * time);
+        return e;
     }
  
 } 
