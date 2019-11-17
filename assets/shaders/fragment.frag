@@ -700,92 +700,144 @@ entity mOctahedron(vec3 path, float height, material material) {
     return m;
 }
 
+entity mTentacle(vec3 path, float time, float scale, float baseWidth, float height) {
+    material m1 = material(
+        vec3(1.0, 0.0, 0.0),
+        1.0,
+
+        vec3(1.0, 1.0, 0.0),
+        0.2,
+
+        vec3(1.0, 1.0, 1.0),
+        200.0,
+        150.0,
+
+        0.9,
+        false,
+        0.5,
+        5.5,
+        textureOptions(
+            0,
+            vec3(1.5, 1.5, 1.5),
+            vec3(2.0, 2.0, 2.0),
+            false
+        )
+    );
+    vec3 stemPos = path / scale;
+
+    stemPos = rotZ(stemPos, 0.60 * smoothstep(-150.0, -70.0, stemPos.y));
+    stemPos = rotZ(stemPos, 0.35 * smoothstep(-70.0, 20.0, stemPos.y));
+    stemPos = rotZ(stemPos, 0.60 * smoothstep(20.0, 100.0, stemPos.y));
+    stemPos = rotZ(stemPos, 0.20 * smoothstep(100.0, 150.0, stemPos.y));
+    //stemPos = rotY(stemPos, stemPos.y / 20.0);
+   
+    float bumpX = sin(stemPos.y * 0.2) * 3.5;
+    float bumpZ = cos(stemPos.y * 0.1) * 3.0;
+    float width = baseWidth + (sin((-time * 10) + stemPos.y / 4.0) * 1.5);
+    
+    if(stemPos.x > 0)
+        stemPos.x += bumpX * smoothstep(0.0, width, stemPos.x);
+    else 
+        stemPos.x -= bumpX * smoothstep(0.0, width, -stemPos.x);
+
+    if(stemPos.z > 0)
+        stemPos.z += bumpZ * smoothstep(0.0, width, stemPos.z);
+    else 
+        stemPos.z -= bumpZ * smoothstep(0.0, width, -stemPos.z);
+     
+    entity e1 = mCappedCylinder(stemPos, vec2(width, height), 0.5, m1);
+    e1.needNormals = true;  
+    e1.dist *= scale;
+    return e1;
+}
+
+entity mTentacles(vec3 path, float time, float scale) {
+
+    vec2Tuple repeated = repeatPolar(path.xz, 8.0);
+    float timeOffset = mod(repeated.second.x, 2) * 50.0;
+    vec2 repeatedPath = repeated.first;
+    vec3 path1 = vec3(repeatedPath.x, path.y, repeatedPath.y);
+    vec3 translated = translate(path1, vec3(15.0, 0.0, 0.0));
+    entity t1 = mTentacle(translated, (time / 2.0) + timeOffset, scale, 20.0, 150.0);
+    return t1;
+}
+
+entity mLungs(vec3 path, float time, float scale) {
+    /*
+    material m1 = material(
+        vec3(0.5, 0.5, 0.5),
+        1.1,
+
+        vec3(1.0, 0.79, 0.64),
+        1.0,
+
+        vec3(1.0, 1.0, 1.0),
+        10.1,
+        10.1,
+
+        0.9,
+        false,
+        1.5,
+        2.5,
+        textureOptions(
+            0,
+            vec3(1.5, 1.5, 1.5),
+            vec3(2.0, 2.0, 2.0),
+            false
+        )
+    );
+    */
+        material m1 = material(
+        vec3(1.0, 0.0, 0.0),
+        1.0,
+
+        vec3(1.0, 1.0, 0.0),
+        0.2,
+
+        vec3(1.0, 1.0, 1.0),
+        200.0,
+        150.0,
+
+        0.9,
+        false,
+        0.5,
+        5.5,
+        textureOptions(
+            0,
+            vec3(1.5, 1.5, 1.5),
+            vec3(2.0, 2.0, 2.0),
+            false
+        )
+    );
+    float radius = 10.0 + (sin(time) + 1.0) * 2.0;
+    vec3 sPath1 = path / scale;
+    entity l1 = mSphere(sPath1, radius, m1);
+    l1.dist += displacement(sPath1, vec3(2.5, 2.0, 2.5)) / 5.0;
+    l1.dist *= scale;
+    l1.needNormals = true;
+
+    vec3 sPath2 = translate(sPath1, vec3(-radius / 2.0, radius / 1.2, 0.0));
+    entity l2 = mSphere(sPath2, radius / 2.0, m1);
+    l2.dist += displacement(sPath2, vec3(2.5, 2.0, 2.5)) / 5.0;
+    l2.dist *= scale;
+    l2.needNormals = true;
+
+    vec3 sPath3 = translate(sPath1, vec3(radius / 1.0, -radius / 2.0, 0.0));
+    entity l3 = mSphere(sPath3, radius / 1.5, m1);
+    l3.dist += displacement(sPath3, vec3(2.5, 2.0, 2.5)) / 5.0;
+    l3.dist *= scale;
+    l3.needNormals = true;
+    return opSmoothUnion(opSmoothUnion(l1, l2, 4.0, 0.5), l3, 4.0, 0.0);
+}
+
 entity scene(vec3 path, vec2 uv)
 {   
     int a = int(act);
     if(a == 1) {
-        vec3 r = rot(path, vec3(time / 2.5, time / 5.0, 0.0));
-        material m1 = material(
-            vec3(1.0, 0.0, 0.0),
-            1.0,
-
-            vec3(1.0, 0.0, 0.0),
-            2.2,
-
-            vec3(1.0, 1.0, 1.0),
-            200.0,
-            150.0,
-
-            1.2,
-            false,
-            2.5,
-            5.5,
-            textureOptions(
-                0,
-                vec3(1.5, 1.5, 1.5),
-                vec3(2.0, 2.0, 2.0),
-                false
-            )
-        );
-        vec3 stemPos = r;
-        stemPos.xz += 1.5 * vec2(sin(stemPos.y * 0.6 - time * 5.0), cos(stemPos.y * 0.2 -  time * 3.5));
-
-        entity e1 = mCappedCylinder(stemPos, vec2(20.0, 200.0), 0.5, m1);
-        e1.needNormals = true;  
-        e1.dist *= 0.5;
-        material m2 = material(
-            vec3(0.0, 1.0, 0.0),
-            1.0,
-
-            vec3(1.0, 1.0, 1.0),
-            0.2,
-
-            vec3(1.0, 1.0, 1.0),
-            10.0,
-            20.0,
-
-            0.2,
-            true,
-            1.5,
-            5.5,
-            textureOptions(
-                0,
-                vec3(1.5, 1.5, 1.5),
-                vec3(2.0, 2.0, 2.0),
-                false
-            )
-        );
-
-        entity e2 = mBox(rotZ(translate(r, vec3(0.5, 1.0, 1.0)), -0.7), vec3(1.0), 0.1, m2);
-        
-        e2.needNormals = true;
-
-        material m3 = material(
-            vec3(0.0, 0.0, 1.0),
-            1.0,
-
-            vec3(1.0, 1.0, 1.0),
-            0.2,
-
-            vec3(1.0, 1.0, 1.0),
-            10.0,
-            20.0,
-
-            0.2,
-            true,
-            1.5,
-            5.5,
-            textureOptions(
-                0,
-                vec3(1.5, 1.5, 1.5),
-                vec3(2.0, 2.0, 2.0),
-                false
-            )
-        );
-        
-        entity e3 = mBox(rotZ(translate(r, vec3(-0.5, -1.0, -1.0)), 0.7), vec3(1.0), 0.1, m3);
-        e3.needNormals = true;  
-        return opSmoothUnion(opSmoothUnion(e1, e2, 0.5, 0.0), e3, 0.5, 0.0);
+        entity tentacles = mTentacles(rotX(path, 280 * PI / 180), time, 0.2);
+        entity lungs = mLungs(translate(path, vec3(0.0, 0.0, -2.0)), time, 1.0);
+        return opSmoothUnion(tentacles, lungs, 6.0, 0.0);
+   
     }
     else if(a == 2) {
         material m1 = material(
@@ -961,6 +1013,7 @@ vec3 generateTexture(int index, vec3 point, vec3 offset, vec3 scale) {
 
 vec3 determinePixelBaseColor(float steps, float dist, entity e) {
     vec3 base = vec3(1.0 - smoothstep(0.0, rayMaxSteps, steps));
+    
     if(e.material.textureOptions.normalMap == false) {
         base *= generateTexture(e.material.textureOptions.index, e.point, e.material.textureOptions.offset, e.material.textureOptions.scale);
     }
@@ -989,6 +1042,7 @@ vec3 calculateLights(in vec3 normal, in vec3 eye, in vec3 lp, in vec3 origin, en
     lights += diffuse;
     lights += specular;
     lights *= vec3(shadow);
+    //lights -= length(normal) * 0.5;
     return lights;
 }
 
