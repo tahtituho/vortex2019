@@ -789,23 +789,26 @@ entity mLungs(vec3 path, float time, float scale) {
     );
     float radius = 10.0 + (sin(time) + 1.0) * 2.0;
     vec3 sPath1 = path / scale;
-    entity l1 = mSphere(sPath1, radius, m1);
-    l1.dist += displacement(sPath1, vec3(2.5, 2.0, 2.5)) / 5.0;
-    l1.dist *= scale;
-    l1.needNormals = true;
+    float l1 = sdSphere(sPath1, vec3(0.0), radius);
+    l1 += displacement(sPath1, vec3(2.5, 2.0, 2.5)) / 5.0;
+    l1 *= scale;
 
     vec3 sPath2 = translate(sPath1, vec3(-radius / 2.0, radius / 1.2, 0.0));
-    entity l2 = mSphere(sPath2, radius / 2.0, m1);
-    l2.dist += displacement(sPath2, vec3(2.5, 2.0, 2.5)) / 5.0;
-    l2.dist *= scale;
-    l2.needNormals = true;
+    float l2 = sdSphere(sPath2, vec3(0.0), radius / 2.0);
+    l2 += displacement(sPath2, vec3(2.5, 2.0, 2.5)) / 5.0;
+    l2 *= scale;
 
     vec3 sPath3 = translate(sPath1, vec3(radius / 1.0, -radius / 2.0, 0.0));
-    entity l3 = mSphere(sPath3, radius / 1.5, m1);
-    l3.dist += displacement(sPath3, vec3(2.5, 2.0, 2.5)) / 5.0;
-    l3.dist *= scale;
-    l3.needNormals = true;
-    return opSmoothUnion(opSmoothUnion(l1, l2, 4.0, 0.0), l3, 4.0, 0.0);
+    float l3 = sdSphere(sPath3, vec3(0.0), radius / 1.5);
+    l3 += displacement(sPath3, vec3(2.5, 2.0, 2.5)) / 5.0;
+    l3 *= scale;
+
+    entity e1;
+    e1.dist = opSmoothUnion(opSmoothUnion(l1, l2, 4.0), l3, 4.0);
+    e1.point = sPath1;
+    e1.material = m1;
+    e1.needNormals = true;
+    return e1;
 }
 
 entity scene(vec3 path, vec2 uv)
