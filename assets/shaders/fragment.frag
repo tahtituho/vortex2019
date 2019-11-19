@@ -20,6 +20,7 @@ uniform vec3 fogColor;
 uniform float fogIntensity;
 
 uniform sampler2D bogdan;
+uniform sampler2D flesh;
 
 in float[12] sines;
 in float[12] coses;
@@ -702,15 +703,15 @@ entity mOctahedron(vec3 path, float height, material material) {
 
 entity mTentacle(vec3 path, float time, float scale, float baseWidth, float height) {
     material m1 = material(
-        vec3(1.0, 0.0, 0.0),
-        1.0,
+        vec3(1.0, 0.79, 0.64),
+        1.4,
 
-        vec3(1.0, 1.0, 0.0),
-        0.2,
+        vec3(1.0, 0.79, 0.64),
+        10.4,
 
         vec3(1.0, 1.0, 1.0),
-        200.0,
-        150.0,
+        0.0,
+        15.0,
 
         0.9,
         false,
@@ -718,8 +719,8 @@ entity mTentacle(vec3 path, float time, float scale, float baseWidth, float heig
         5.5,
         textureOptions(
             0,
-            vec3(1.5, 1.5, 1.5),
-            vec3(2.0, 2.0, 2.0),
+            vec3(0.0, 0.0, 0.0),
+            vec3(25.0, 25.0, 25.0),
             false
         )
     );
@@ -759,53 +760,30 @@ entity mTentacles(vec3 path, float time, float scale) {
     vec3 path1 = vec3(repeatedPath.x, path.y, repeatedPath.y);
     vec3 translated = translate(path1, vec3(15.0, 0.0, 0.0));
     entity t1 = mTentacle(translated, (time / 2.0) + timeOffset, scale, 20.0, 150.0);
+    t1.dist += displacement(translated, vec3(2.5, 2.0, 2.5)) / 5.0;
     return t1;
 }
 
 entity mLungs(vec3 path, float time, float scale) {
-    /*
     material m1 = material(
-        vec3(0.5, 0.5, 0.5),
-        1.1,
+        vec3(1.0, 0.79, 0.64),
+        1.4,
 
         vec3(1.0, 0.79, 0.64),
-        1.0,
+        0.4,
 
         vec3(1.0, 1.0, 1.0),
-        10.1,
-        10.1,
-
-        0.9,
-        false,
-        1.5,
-        2.5,
-        textureOptions(
-            0,
-            vec3(1.5, 1.5, 1.5),
-            vec3(2.0, 2.0, 2.0),
-            false
-        )
-    );
-    */
-        material m1 = material(
-        vec3(1.0, 0.0, 0.0),
-        1.0,
-
-        vec3(1.0, 1.0, 0.0),
-        0.2,
-
-        vec3(1.0, 1.0, 1.0),
-        200.0,
-        150.0,
+        0.0,
+        15.0,
 
         0.9,
         false,
         0.5,
         5.5,
         textureOptions(
-            0,
-            vec3(1.5, 1.5, 1.5),
-            vec3(2.0, 2.0, 2.0),
+            2,
+            vec3(0.0, 0.0, 0.0),
+            vec3(15.0, 15.0, 15.0),
             false
         )
     );
@@ -827,7 +805,7 @@ entity mLungs(vec3 path, float time, float scale) {
     l3.dist += displacement(sPath3, vec3(2.5, 2.0, 2.5)) / 5.0;
     l3.dist *= scale;
     l3.needNormals = true;
-    return opSmoothUnion(opSmoothUnion(l1, l2, 4.0, 0.5), l3, 4.0, 0.0);
+    return opSmoothUnion(opSmoothUnion(l1, l2, 4.0, 0.0), l3, 4.0, 0.0);
 }
 
 entity scene(vec3 path, vec2 uv)
@@ -1004,6 +982,11 @@ vec3 generateTexture(int index, vec3 point, vec3 offset, vec3 scale) {
         case 1: {
             vec3 rp = vec3((point.x / scale.x) + offset.x, (point.y / scale.y) + offset.y, (point.z / scale.z) + offset.z);
             r = textureCube(bogdan, rp, vec3(0.0, 0.0, 0.1)).xyz;
+            break;
+        }
+        case 2: {
+            vec3 rp = vec3((point.x / scale.x) + offset.x, (point.y / scale.y) + offset.y, (point.z / scale.z) + offset.z);
+            r = textureCube(flesh, rp, vec3(0.0, 0.0, 0.1)).xyz;
             break;
         }
        
