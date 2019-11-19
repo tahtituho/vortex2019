@@ -84,6 +84,11 @@
             "type": "staticTexture",
             "name": "bogdan",
             "file": "assets\\textures\\bogdan.png"
+        },
+        {
+            "type": "staticTexture",
+            "name": "bogdan",
+            "file": "assets\\textures\\flesh.png"
         }
     ],
     "tracks": [
