@@ -20,6 +20,7 @@ uniform vec3 fogColor;
 uniform float fogIntensity;
 
 uniform sampler2D bogdan;
+uniform sampler2D a222;
 uniform sampler2D flesh;
 
 in float[12] sines;
@@ -701,37 +702,14 @@ entity mOctahedron(vec3 path, float height, material material) {
     return m;
 }
 
-entity mTentacle(vec3 path, float time, float scale, float baseWidth, float height) {
-    material m1 = material(
-        vec3(1.0, 0.79, 0.64),
-        1.4,
-
-        vec3(1.0, 0.79, 0.64),
-        10.4,
-
-        vec3(1.0, 1.0, 1.0),
-        0.0,
-        15.0,
-
-        0.9,
-        false,
-        0.5,
-        5.5,
-        textureOptions(
-            0,
-            vec3(0.0, 0.0, 0.0),
-            vec3(25.0, 25.0, 25.0),
-            false
-        )
-    );
+float mTentacle(vec3 path, float time, float scale, float baseWidth, float height) {
     vec3 stemPos = path / scale;
 
     stemPos = rotZ(stemPos, 0.60 * smoothstep(-150.0, -70.0, stemPos.y));
     stemPos = rotZ(stemPos, 0.35 * smoothstep(-70.0, 20.0, stemPos.y));
     stemPos = rotZ(stemPos, 0.60 * smoothstep(20.0, 100.0, stemPos.y));
     stemPos = rotZ(stemPos, 0.20 * smoothstep(100.0, 150.0, stemPos.y));
-    //stemPos = rotY(stemPos, stemPos.y / 20.0);
-   
+
     float bumpX = sin(stemPos.y * 0.2) * 3.5;
     float bumpZ = cos(stemPos.y * 0.1) * 3.0;
     float width = baseWidth + (sin((-time * 10) + stemPos.y / 4.0) * 1.5);
@@ -746,37 +724,37 @@ entity mTentacle(vec3 path, float time, float scale, float baseWidth, float heig
     else 
         stemPos.z -= bumpZ * smoothstep(0.0, width, -stemPos.z);
      
-    entity e1 = mCappedCylinder(stemPos, vec2(width, height), 0.5, m1);
-    e1.needNormals = true;  
-    e1.dist *= scale;
+    float e1 = sdCappedCylinder(stemPos, vec2(width, height), 0.5);
+    e1 *= scale;
     return e1;
 }
 
-entity mTentacles(vec3 path, float time, float scale) {
+float sdTentacles(vec3 path, float time, float scale) {
 
     vec2Tuple repeated = repeatPolar(path.xz, 8.0);
     float timeOffset = mod(repeated.second.x, 2) * 50.0;
     vec2 repeatedPath = repeated.first;
     vec3 path1 = vec3(repeatedPath.x, path.y, repeatedPath.y);
     vec3 translated = translate(path1, vec3(15.0, 0.0, 0.0));
-    entity t1 = mTentacle(translated, (time / 2.0) + timeOffset, scale, 20.0, 150.0);
-    t1.dist += displacement(translated, vec3(2.5, 2.0, 2.5)) / 5.0;
+    float t1;
+    t1 = mTentacle(translated, (time / 2.0) + timeOffset, scale, 20.0, 150.0);
+    t1 += displacement(translated, vec3(2.5, 2.0, 2.5)) / 5.0;
     return t1;
 }
 
 entity mLungs(vec3 path, float time, float scale) {
     material m1 = material(
         vec3(1.0, 0.79, 0.64),
-        1.4,
+        1.0,
 
         vec3(1.0, 0.79, 0.64),
         0.4,
 
         vec3(1.0, 1.0, 1.0),
-        0.0,
-        15.0,
+        100.0,
+        150.0,
 
-        0.9,
+        0.2,
         false,
         0.5,
         5.5,
@@ -787,27 +765,31 @@ entity mLungs(vec3 path, float time, float scale) {
             false
         )
     );
-    float radius = 10.0 + (sin(time) + 1.0) * 2.0;
+    float radius = 8.0 + (sin(time) + 1.0) * 2.0;
     vec3 sPath1 = path / scale;
-    float l1 = sdSphere(sPath1, vec3(0.0), radius);
+    float l1 = sdSphere(sPath1 / scale, vec3(0.0), radius);
     l1 += displacement(sPath1, vec3(2.5, 2.0, 2.5)) / 5.0;
     l1 *= scale;
 
-    vec3 sPath2 = translate(sPath1, vec3(-radius / 2.0, radius / 1.2, 0.0));
+    vec3 sPath2 = translate(sPath1, vec3(-radius / 2.0, radius / 1.2, 0.0)) / scale;
     float l2 = sdSphere(sPath2, vec3(0.0), radius / 2.0);
     l2 += displacement(sPath2, vec3(2.5, 2.0, 2.5)) / 5.0;
     l2 *= scale;
 
-    vec3 sPath3 = translate(sPath1, vec3(radius / 1.0, -radius / 2.0, 0.0));
+    vec3 sPath3 = translate(sPath1, vec3(radius / 1.0, -radius / 2.0, 0.0)) / scale;
     float l3 = sdSphere(sPath3, vec3(0.0), radius / 1.5);
     l3 += displacement(sPath3, vec3(2.5, 2.0, 2.5)) / 5.0;
     l3 *= scale;
 
+    vec3 tPath1 = rotX(path, 280 * PI / 180);
+    float t1 = sdTentacles(tPath1, time, 0.2);
+
     entity e1;
-    e1.dist = opSmoothUnion(opSmoothUnion(l1, l2, 4.0), l3, 4.0);
-    e1.point = sPath1;
+    e1.dist = opSmoothUnion(opSmoothUnion(opSmoothUnion(l1, l2, 4.0), l3, 4.0), t1, 4.0);
+    e1.point = path;
     e1.material = m1;
     e1.needNormals = true;
+    
     return e1;
 }
 
@@ -815,9 +797,9 @@ entity scene(vec3 path, vec2 uv)
 {   
     int a = int(act);
     if(a == 1) {
-        entity tentacles = mTentacles(rotX(path, 280 * PI / 180), time, 0.2);
+        //entity tentacles = mTentacles(rotX(path, 280 * PI / 180), time, 0.2);
         entity lungs = mLungs(translate(path, vec3(0.0, 0.0, -2.0)), time, 1.0);
-        return opSmoothUnion(tentacles, lungs, 6.0, 0.0);
+        return lungs;
    
     }
     else if(a == 2) {
@@ -1001,7 +983,7 @@ vec3 determinePixelBaseColor(float steps, float dist, entity e) {
     vec3 base = vec3(1.0 - smoothstep(0.0, rayMaxSteps, steps));
     
     if(e.material.textureOptions.normalMap == false) {
-        base *= generateTexture(e.material.textureOptions.index, e.point, e.material.textureOptions.offset, e.material.textureOptions.scale);
+        base *= generateTexture(e.material.textureOptions.index, e.point, e.material.textureOptions.offset, e.material.textureOptions.scale) ;
     }
     return base;
 }

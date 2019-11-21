@@ -76,6 +76,12 @@
         "textures": [
             {
                 "name": "bogdan"
+            },
+            {
+                "name": "a222"
+            },
+            {
+                "name": "flesh"
             }
         ]
     },
@@ -87,7 +93,12 @@
         },
         {
             "type": "staticTexture",
-            "name": "bogdan",
+            "name": "a222",
+            "file": "assets\\textures\\A_222.png"
+        },
+        {
+            "type": "staticTexture",
+            "name": "flesh",
             "file": "assets\\textures\\flesh.png"
         }
     ],
