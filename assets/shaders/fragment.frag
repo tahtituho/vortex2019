@@ -476,6 +476,14 @@ vec3 scale(vec3 p, float s) {
     return p1;
 } 
 
+float rand(float n){return fract(sin(n) * 43758.5453123);}
+
+float noise(float p){
+	float fl = floor(p);
+    float fc = fract(p);
+	return mix(rand(fl), rand(fl + 1.0), fc);
+}
+
 vec3Tuple repeat(vec3 p, vec3 size) {
     vec3 c = floor((p + size * 0.5 ) / size);
     vec3 path1 = mod(p + size * 0.5, size) - size * 0.5;
@@ -591,6 +599,18 @@ entity mBox(vec3 path, vec3 size, float r, material material) {
     return m;
 }
 
+float vmax(vec3 v) {
+	return max(max(v.x, v.y), v.z);
+}
+
+entity mBoxCheap(vec3 p, vec3 b, material material) {
+    entity m;
+    m.dist = vmax(abs(p) - b);
+    m.point = p;
+    m.material = material;
+    return m;
+}
+
 entity mTorus(vec3 path, vec2 dim, material material) {
     entity m;
     vec3 p1 = path;
@@ -599,6 +619,69 @@ entity mTorus(vec3 path, vec2 dim, material material) {
     m.material = material;
     return m;
 }
+
+entity mTerrain(vec3 path, vec3 par, material material) {
+    entity m;
+    float s = 1.0;
+    vec3Tuple p1 = repeat(path, vec3(s * 2.5, 0.0, s * 2.5));
+
+    
+    float a = length(p1.second.xz);
+    float b = (1.0 - smoothstep(-4.0, 10.0, a)) * 15.0;
+    float c = fract(p1.second.x / 2);
+    float d = fract(p1.second.z / 2);
+    float e = sin(pow(p1.second.x, 2.0)) + 1.0 * (sin(time * 5.0) + 1.0);
+    float timer = floor(smoothstep(0, 5, tan(time)) * 100);
+    float timer2 = floor(smoothstep(0, 5, tan(time + 10)) * 100);
+    float color = smoothstep(0, 1, sin(time*5.0));
+    float midtotimer = floor(length(p1.second.xz));
+    float ramp = midtotimer + 1;
+    float ramp2 = midtotimer - 1;
+    if (midtotimer == timer && timer > 0) {
+    //if ((p1.second.x) == timer || abs(p1.second.z) == timer) {
+        material.ambient = vec3(1.0, 1.0, 1.0);
+        m = mBox(translate(p1.first, vec3(0.0, midtotimer, 0.0)), vec3(s, s, s), 0.05, material);
+    }
+    else if (midtotimer == timer2 && timer2 > 0) {
+        material.ambient = vec3(1.0, 1.0, 1.0);
+        m = mBox(translate(p1.first, vec3(0.0, midtotimer, 0.0)), vec3(s, s, s), 0.05, material);
+    }
+    else if (ramp == timer || ramp2 == timer && timer > 0) {
+        material.ambient = vec3(1.0, 0.0, 0.0);
+        m = mBox(translate(p1.first, vec3(0.0, 2.0, 0.0)), vec3(s, s, s), 0.05, material);
+    }
+    else if (noise(p1.second.x) > 0.9 && noise(p1.second.z) < 0.1) {
+        material.ambient = vec3(1.0, 0.0, 0.0);
+        float coeff;
+        if (sin(time) > 0) {
+            coeff = 0;
+        }
+        else {
+            coeff = 1;
+        }
+        m = mBox(translate(p1.first, vec3(0.0, sin(time * 20 * coeff) + 2.0, 0.0)), vec3(s, s, s), 0.05, material);
+    }
+
+ /*   if (spiral(floor((sin(time * 1.5) + 1) * 150)) == p1.second.xz) {
+        material.ambient = vec3(1.0, 0.0, 0.0);
+        m = mBox(translate(p1.first, vec3(0.0, 2, 0.0)), vec3(s, s, s), 0.05, material);
+    }
+*/    else {
+        material.ambient = vec3(0.2, 0.2, 0.2);
+        m = mBox(p1.first, vec3(s, s, s), 0.05, material);
+    }
+
+    /*if ( c > 0 && d > 0 ) {
+        material.ambient = vec3(0.5, 0.5, 0.5);
+    }
+    else {
+        material.ambient = vec3(sin(time * 10), 0.0, 0.1);
+    }*/
+    m.point = p1.first;
+    return m;
+}
+
+
 
 entity scene(vec3 path, vec2 uv)
 {   
@@ -690,6 +773,76 @@ entity scene(vec3 path, vec2 uv)
         //comb.dist += displacement(r, vec3(3.0));
         comb.needNormals = true;
         return comb;
+    }
+    else if (a == 10) {
+        vec3 planecolor;
+        //vec3 wallcolor;
+        
+        if(fract(path.x + floor(path.y*90.0) * 0.5 + floor(path.z*90.0) * 0.5) < 0.5)
+        {
+            planecolor = vec3(1.0, sin(time*10.5)*0.9, 0.0);
+        }
+        else {
+            planecolor = vec3(0.0, 0.0, 0.0);
+        }
+        /*if(fract(path.x) < 0.2 || fract(path.z + path.y) > 0.8)
+        {   
+            wallcolor = vec3(0.0, 0.0, 1.0);
+        }
+        else {
+            wallcolor = vec3(0.0, 0.0, 0.0);
+        }
+        material bluemat = material(
+            wallcolor,
+            1.0,
+            vec3(0.5, 0.5, 0.5),
+            1.3,
+            vec3(0.0, 0.0, 0.5),
+            10.0,
+            0.4,
+            1.0, 
+            true,
+            textureOptions(
+                1,
+                vec3(1.0),
+                vec3(1.0),
+                false
+            )
+        );*/
+        material planemat = material(
+            planecolor,
+            1.0,
+            vec3(0.5, 0.5, 0.5),
+            1.3,
+            vec3(0.0, 0.0, 0.5),
+            10.0,
+            0.4,
+            1.0, 
+            true,
+            2.5,
+            5.5,
+            textureOptions(
+                0,
+                vec3(0.0),
+                vec3(0.0),
+                false
+            )
+        );
+        //entity box = mBox(path, vec3(0.1, 800.0, 800.0), 0.0, planemat);
+        //entity planebottom = mPlane(path, vec3(0.0, -20.0, 0.0), normalize(vec4(1.0, 0.0, 0.0, 0.0)), planemat);
+        entity terrain = mTerrain(path, vec3(100.0, 20.0, 1.0), planemat);
+        float saizu = 1;
+        entity guard = mBoxCheap(path, vec3(saizu), planemat);
+        guard.dist = -guard.dist;
+        guard.dist = abs(guard.dist) + saizu * 0.1;
+        //entity torusf = mTorusFractal(path, 3, 1.0, 0.0, planemat, 5, 3);
+        //entity hugebox = mBox(path, vec3(999999999.0, 999999999.0, 999999.0), 0.0, bluemat);
+        //entity roombox = mBox(path, vec3(150.0, 150.0, 150.0), 0.0, bluemat);
+        //roombox.needNormals = true;
+        //hugebox.needNormals = true;
+        //entity stuff = opUnion(torusf, terrain);
+        return opUnion(terrain, guard);
+        //return opUnion(opSubtraction(roombox, hugebox), terrain);
     }
  
 } 
