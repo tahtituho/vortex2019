@@ -76,6 +76,12 @@
         "textures": [
             {
                 "name": "bogdan"
+            },
+            {
+                "name": "tunnelTex"
+            },
+            {
+                "name": "tunnelTexNm"
             }
         ]
     },
@@ -83,7 +89,17 @@
         {
             "type": "staticTexture",
             "name": "bogdan",
-            "file": "assets\\textures\\bogdan.png"
+            "file": "assets\\textures\\tunnel.png"
+        },
+        {
+            "type": "staticTexture",
+            "name": "tunnelTex",
+            "file": "assets\\textures\\tunnel.png"
+        },
+        {
+            "type": "staticTexture",
+            "name": "tunnelTexNm",
+            "file": "assets\\textures\\tunnelnm.png"
         }
     ],
     "tracks": [

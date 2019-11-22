@@ -20,6 +20,8 @@ uniform vec3 fogColor;
 uniform float fogIntensity;
 
 uniform sampler2D bogdan;
+uniform sampler2D tunnelTex;
+uniform sampler2D tunnelTexNm;
 
 in float[12] sines;
 in float[12] coses;
@@ -695,25 +697,25 @@ entity mOctahedron(vec3 path, float height, float scale, material material) {
 
 entity tunnelSegment(vec3 path, float r1, float r2, float h, float notch, int numberOfNotches, float scale) {
     material m1 = material(
-        vec3(1.0, 1.0, 0.0),
-        20.0,
+        vec3(0.2, 0.2, 0.0),
+        2.0,
 
-        vec3(0.3, 0.3, 0.0),
-        100.0,
+        vec3(0.3, 0.3, 0.3),
+        5.0,
 
         vec3(1.0, 1.0, 1.0),
-        50000.0,
-        80.0,
+        500.0,
+        30.0,
 
-        0.3,
+        0.8,
         true,
-        0.25,
-        10.0,
+        0.05,
+        0.5,
         textureOptions(
-            0,
-            vec3(1.5, 1.5, 1.5),
-            vec3(2.0, 2.0, 2.0),
-            false
+            2,
+            vec3(0.0, 0.0, 0.0),
+            vec3(5.0, 5.0, 5.0),
+            true
         )
     );
     entity cs1 = mCappedCylinder(path, vec2(r1, h), 0.0, scale, m1);
@@ -727,9 +729,44 @@ entity tunnelSegment(vec3 path, float r1, float r2, float h, float notch, int nu
 
 }  
 
-entity tunnnel(vec3 path) {
-    vec3Tuple repeated = repeat(path, vec3(0.0, 1.0, 0.0));
+entity tunnel(vec3 path) {
+    vec3Tuple repeated = repeat(path, vec3(0.0, .80, 0.0));
     return tunnelSegment(rot(repeated.first, vec3(0.0, mod(repeated.second.y, 8) * (time / 20.0), 0.0)), 2.0, 1.5, 0.2, 0.25, 6 + int(mod(repeated.second.y, 5) * 2.0), 1.0);   
+}
+
+entity platforms(vec3 path) {
+    material m1 = material(
+        vec3(0.0, 0.0, 1.0),
+        1.0,
+
+        vec3(1.0, 1.0, 1.0),
+        1.2,
+
+        vec3(1.0, 1.0, 1.0),
+        10.0,
+        20.0,
+
+        0.8,
+        true,
+        1.5,
+        2.0,
+        textureOptions(
+            2,
+            vec3(1.5, 1.5, 1.5),
+            vec3(2.0, 2.0, 2.0),
+            true
+        )
+    );
+    entity p;
+    vec3 size = vec3(0.25, 0.2, 0.25);
+    float p1 = sdBox(path, vec3(0.0), size, 0.025);
+    float p2 = sdBox(translate(path, vec3(0.5, 0.0, 0.5)), vec3(0.0), size, 0.025);
+    float p3 = sdBox(translate(path, vec3(-0.5, 0.0, 0.5)), vec3(0.0), size, 0.025);
+
+    p.point = path;
+    p.dist = opSmoothUnion(opSmoothUnion(p1, p2, 0.0), p3, 0.0);
+    p.material = m1;
+    return p;
 }
 
 entity scene(vec3 path, vec2 uv)
@@ -852,9 +889,11 @@ entity scene(vec3 path, vec2 uv)
     else if(a == 3) {
         vec3 r = rot(path, vec3(PI / 2.0, 0.0, time / 10.0));
         
-        entity e = tunnnel(r - vec3(0.0, time / .5, 0.0));
-        //e.dist += (displacement(r, vec3(0.10, 0.10, 0.1)) * time);
-        return e;
+        entity e = tunnel(r - vec3(0.0, time, 0.0));
+        vec3Tuple platformRepeat = repeat(translate(path, vec3(0.0, -0.75, time)), vec3(0.0, 0.0, 2.0));
+        entity platform = platforms(platformRepeat.first);
+        return opSmoothUnion(platform, e, 0.0, 0.0);
+
     }
  
 } 
@@ -990,6 +1029,11 @@ vec3 generateTexture(int index, vec3 point, vec3 offset, vec3 scale) {
         case 1: {
             vec3 rp = vec3((point.x / scale.x) + offset.x, (point.y / scale.y) + offset.y, (point.z / scale.z) + offset.z);
             r = textureCube(bogdan, rp, vec3(0.0, 0.0, 0.1)).xyz;
+            break;
+        }
+        case 2: {
+            vec3 rp = vec3((point.x / scale.x) + offset.x, (point.y / scale.y) + offset.y, (point.z / scale.z) + offset.z);
+            r = textureCube(tunnelTex, rp, vec3(0.0, 0.0, 0.1)).xyz;
             break;
         }
        
