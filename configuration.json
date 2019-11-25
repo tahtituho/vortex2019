@@ -121,20 +121,11 @@
         },
         {
             "type": "float3",
-        },
-        {
-            "type": "float3",
-            "name": {
-                "track": "fog:color",
-                "variable": "fogColor"
-            }
+            "track": "fog:color"
         },
         {
             "type": "float1",
-            "name": {
-                "track": "fog:intensity",
-                "variable": "fogIntensity"
-            }
+            "track": "fog:intensity"
         }
     ]
 }
