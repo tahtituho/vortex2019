@@ -639,6 +639,84 @@ entity mCappedCylinder(vec3 path, vec2 size, float r, material material) {
     return m;
 }
 
+entity mCasette(vec3 path, float scale, float time) {
+    material bodyMat = material(
+        vec3(0.25, 0.25, 0.25),
+        1.0,
+
+        vec3(0.25, 0.25, 0.25),
+        2.2,
+
+        vec3(1.0, 1.0, 1.0),
+        1.0,
+        100.0,
+
+        0.2,
+        true,
+        1.5,
+        5.5,
+        textureOptions(
+            0,
+            vec3(1.5, 1.5, 1.5),
+            vec3(2.0, 2.0, 2.0),
+            false
+        )
+    );
+    material labelMat = material(
+        vec3(1.00, 1.00, 1.00),
+        1.0,
+
+        vec3(1.00, 1.00, 1.00),
+        2.2,
+
+        vec3(1.0, 1.0, 1.0),
+        0.0,
+        0.0,
+
+        0.2,
+        true,
+        1.5,
+        5.5,
+        textureOptions(
+            1,
+            vec3(0.0, 0.0, 0.0),
+            vec3(20.0, 20.0, 20.0),
+            false
+        )
+    );
+    vec3 sPath = path / scale;
+    float gearDir = sign(sPath.x);
+    sPath.x = -abs(sPath.x);
+    float bodyBase = sdBox(translate(sPath, vec3(-50.1, 0.0, 0.0)), vec3(0.0, 0.0, 0.0), vec3(50.1, 63.8, 8.6), 1.8) * scale;
+    float bodySideOverHang = sdBox(translate(sPath, vec3(-100.2 + 2.5, -41.0, 0.0)), vec3(0.0, 0.0, 0.0), vec3(5.0, 17.7, 2.7), 1.8) * scale;
+    float bodyLowerOverHang = sdBox(translate(sPath, vec3(-34.5, -63.8 + 15.5, 0.0)), vec3(0.0), vec3(34.5, 15.5, 12.0), 1.8) * scale;
+    float bodyLowerOverHangDel = sdBox(rotZ(translate(sPath, vec3(-79.0, -63.8 + 15.5, 0.0)), 0.17), vec3(0.0), vec3(15.0, 20.0, 20.0), 0.0) * scale;
+    float bodyLowerOverHangUnion = opSmoothSubtraction(bodyLowerOverHangDel, bodyLowerOverHang, 0.0);
+
+    float centerHole = sdBox(translate(sPath, vec3(-11.5, 12.9, 0.0)), vec3(0.0), vec3(12.5, 8.4, 15.0), 1.8) * scale;
+    float gearHole = sdCappedCylinder(translate(rotX(sPath, 1.5708), vec3(-21.3 - 22.0, 0.0, 11.0)), vec2(11.0, 15.0), 0.0) * scale; 
+    float pinHole1 = sdCappedCylinder(translate(rotX(sPath, 1.5708), vec3(-48.5, 0.0, -59.0)), vec2(4.6, 40.0), 0.0) * scale;
+    float pinHole2 = sdBox(translate(rotX(sPath, 1.5708), vec3(-30.0, 0.0, -55.0)), vec3(0.0), vec3(4.2, 40.0, 4.2), 0.0) * scale;
+    float bodyLowerEmpty = sdBox(translate(sPath, vec3(-27.0, -59.0, 0.0)), vec3(0.0), vec3(37.0, 8.0, 10.0), 0.0) * scale;
+    float copyHole = sdBox(translate(sPath, vec3(-90.0, 65.0, 0.0)), vec3(0.0), vec3(6.25, 5.0, 5.0), 0.0) * scale;
+   
+    float bottom = sdBox(translate(sPath, vec3(-25.0, -63.6, 0.0)), vec3(0.0, 0.0, 0.0), vec3(13.0, 2.0, 12.0), 0.0) * scale;
+    vec2Tuple gearRepeat = repeatPolar(rotZ(translate(sPath, vec3(-21.3 - 22.0, 11.0, 0.0)), time * gearDir).xy, 6);
+    float gears = sdBox(vec3(gearRepeat.first, sPath.z) - vec3(9.0, 0.0, 0.0), vec3(0.0), vec3(1.5, 1.5, 1.5), 0.0) * scale; 
+    float body = opSmoothUnion(bottom, opSmoothSubtraction(copyHole, opSmoothSubtraction(bodyLowerEmpty, opSmoothUnion(gears, opSmoothSubtraction(pinHole2, opSmoothSubtraction(pinHole1, opSmoothSubtraction(gearHole, opSmoothSubtraction(centerHole, opSmoothUnion(opSmoothUnion(bodyBase, bodySideOverHang, 0.0), bodyLowerOverHangUnion, 0.0), 0.0), 0.0), 0.0), 0.0), 0.0), 0.0), 0.0), 0.0);
+   
+    entity label = mBox(translate(sPath, vec3(0.0, 16.0, -11.5)), vec3(93.0, 42.0, 2.0), 0.5, labelMat);
+    label.dist *= scale;
+    label.material = labelMat;
+    label.needNormals = true;
+
+    entity cass;
+    cass.dist = body;
+    cass.material = bodyMat;
+    cass.needNormals = true;
+    return opSmoothSubtraction(label, cass, 0.0, 0.0);
+}
+
 entity scene(vec3 path, vec2 uv)
 {   
     int a = int(act);
@@ -728,6 +806,10 @@ entity scene(vec3 path, vec2 uv)
         //comb.dist += displacement(r, vec3(3.0));
         comb.needNormals = true;
         return comb;
+    }
+    else if(a == 2) {
+        entity cass = mCasette(rotY(rotX(path, time), time / 2), 0.01, time);
+        return cass;
     }
  
 } 
@@ -849,7 +931,7 @@ float plot(float pct, float thickness, vec2 position) {
 vec4 background(vec2 uv) {
     int a = int(act);
     vec4 r = vec4(0.0);
-    if(a == 1) {
+    if(a == 2) {
         r.xyz = vec3(0.0);
         r.w = 1.0;
     }
