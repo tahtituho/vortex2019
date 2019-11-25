@@ -360,6 +360,15 @@ float sdHexPrism(vec3 p, vec3 pos, vec2 h)
     return max(q.z-h.y,max((q.x*0.866025+q.y*0.5),q.y)-h.x);
 }
 
+entity mCapsule(vec3 p, vec3 pos, vec3 a, vec3 b, float r, material material) {
+    entity m;
+    vec3 p1 = p;
+    m.dist = sdCapsule(p, pos, a, b, r);
+    m.point = p1;
+    m.material = material;
+    return m;
+}
+
 entity mMandleBox(vec3 path, material material, float size, float scale, float minrad, float limit, float factor, int iterations, float foldingLimit, float radClamp1, float radClamp2)
 {
     vec4 scalev = vec4(size) / minrad;
@@ -690,6 +699,53 @@ entity scene(vec3 path, vec2 uv)
         //comb.dist += displacement(r, vec3(3.0));
         comb.needNormals = true;
         return comb;
+    }
+    else if (a == 11) {
+        material testmat = material(
+            vec3(0.9, 0.1, 0.1),
+            1.0,
+            vec3(0.5, 0.5, 0.5),
+            1.3,
+            vec3(0.0, 0.0, 0.5),
+            10.0,
+            0.4,
+            1.0, 
+            true,
+            2.5,
+            5.5,
+            textureOptions(
+                0,
+                vec3(0.0),
+                vec3(0.0),
+                false
+            )
+        );
+        material testmat2 = material(
+            vec3(0.6, 0.6, 0.6),
+            1.0,
+            vec3(0.5, 0.5, 0.5),
+            1.3,
+            vec3(0.0, 0.0, 0.5),
+            10.0,
+            0.4,
+            1.0, 
+            true,
+            2.5,
+            5.5,
+            textureOptions(
+                0,
+                vec3(0.0),
+                vec3(0.0),
+                false
+            )
+        );
+        float s = 1.0;
+        vec3Tuple p1 = repeat(path, vec3(s * 5.5, 0.0, s * 5.5));
+        
+        entity dickles = mCapsule(opBend(rotY(p1.first, 2), rand(p1.second.xz) * 0.3 * (sin(time * 16.5 + p1.second.x)) * 0.5), vec3(1), vec3(1.0, 4.0, 1.0), vec3(1, 0, 0), 1.0, testmat);
+        entity floor = mPlane(path, vec3(0, -0.2, 0), vec4(0, 1, 0, 1), testmat2);
+
+        return opSmoothUnion(floor, dickles, 2, 0.01);
     }
  
 } 

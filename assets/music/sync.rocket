@@ -4,7 +4,7 @@
 beatsPerMin="125">
 	<track name="common:act" folded="0" muteKeyCount="0"
 color="ffb27474">
-		<key row="0" value="1.000000" interpolation="0" />
+		<key row="0" value="11.000000" interpolation="0" />
 	</track>
 	<track name="common:fade.x" folded="0" muteKeyCount="0"
 color="ffb28050">
@@ -20,15 +20,15 @@ color="ff60b250">
 	</track>
 	<track name="camera:position.x" folded="0" muteKeyCount="0"
 color="ff4fb292">
-		<key row="0" value="2.000000" interpolation="0" />
+		<key row="0" value="20.000000" interpolation="0" />
 	</track>
 	<track name="camera:position.y" folded="0" muteKeyCount="0"
 color="ff4f71b2">
-		<key row="0" value="2.000000" interpolation="0" />
+		<key row="0" value="25.000000" interpolation="0" />
 	</track>
 	<track name="camera:position.z" folded="0" muteKeyCount="0"
 color="ff8850b2">
-		<key row="0" value="5.499980" interpolation="0" />
+		<key row="0" value="20.000000" interpolation="0" />
 	</track>
 	<track name="camera:lookat.x" folded="0" muteKeyCount="0"
 color="ffb25091">
