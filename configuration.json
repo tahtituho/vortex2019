@@ -76,6 +76,9 @@
         "textures": [
             {
                 "name": "bogdan"
+            },
+            {
+                "name": "cassetteLabel"
             }
         ]
     },
@@ -84,6 +87,11 @@
             "type": "staticTexture",
             "name": "bogdan",
             "file": "assets\\textures\\bogdan.png"
+        },
+        {
+            "type": "staticTexture",
+            "name": "cassetteLabel",
+            "file": "assets\\textures\\cassette.png"
         }
     ],
     "tracks": [

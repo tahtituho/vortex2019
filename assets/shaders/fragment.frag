@@ -20,6 +20,7 @@ uniform vec3 fogColor;
 uniform float fogIntensity;
 
 uniform sampler2D bogdan;
+uniform sampler2D cassetteLabel;
 
 in float[12] sines;
 in float[12] coses;
@@ -678,9 +679,9 @@ entity mCasette(vec3 path, float scale, float time) {
         1.5,
         5.5,
         textureOptions(
-            1,
-            vec3(0.0, 0.0, 0.0),
-            vec3(20.0, 20.0, 20.0),
+            51,
+            vec3(0.65, 0.45, 0.0),
+            vec3(88.0, 150.0, 5.0),
             false
         )
     );
@@ -705,13 +706,17 @@ entity mCasette(vec3 path, float scale, float time) {
     float gears = sdBox(vec3(gearRepeat.first, sPath.z) - vec3(9.0, 0.0, 0.0), vec3(0.0), vec3(1.5, 1.5, 1.5), 0.0) * scale; 
     float body = opSmoothUnion(bottom, opSmoothSubtraction(copyHole, opSmoothSubtraction(bodyLowerEmpty, opSmoothUnion(gears, opSmoothSubtraction(pinHole2, opSmoothSubtraction(pinHole1, opSmoothSubtraction(gearHole, opSmoothSubtraction(centerHole, opSmoothUnion(opSmoothUnion(bodyBase, bodySideOverHang, 0.0), bodyLowerOverHangUnion, 0.0), 0.0), 0.0), 0.0), 0.0), 0.0), 0.0), 0.0), 0.0);
    
-    entity label = mBox(translate(sPath, vec3(0.0, 16.0, -11.5)), vec3(93.0, 42.0, 2.0), 0.5, labelMat);
-    label.dist *= scale;
+    entity label;
+    float labelPaper = sdBox(translate(sPath, vec3(0.0, 16.0, -11.5)), vec3(0.0), vec3(93.0, 42.0, 2.0), 0.5) * scale;
+    float labelHole = sdBox(translate(sPath, vec3(0.0, 12.0, -11.5)), vec3(0.0), vec3(53.0, 9.0, 2.0), 6.0) * scale;
+    label.dist = opSmoothSubtraction(labelHole, labelPaper, 0.0);
+    label.point = rotZ(path / scale, 1.5708);
     label.material = labelMat;
     label.needNormals = true;
 
     entity cass;
     cass.dist = body;
+    cass.point = sPath;
     cass.material = bodyMat;
     cass.needNormals = true;
     return opSmoothSubtraction(label, cass, 0.0, 0.0);
@@ -945,6 +950,11 @@ vec3 generateTexture(int index, vec3 point, vec3 offset, vec3 scale) {
         case 1: {
             vec3 rp = vec3((point.x / scale.x) + offset.x, (point.y / scale.y) + offset.y, (point.z / scale.z) + offset.z);
             r = textureCube(bogdan, rp, vec3(0.0, 0.0, 0.1)).xyz;
+            break;
+        }
+        case 51: {
+            vec3 rp = vec3((point.x / scale.x) + offset.x, (point.y / scale.y) + offset.y, (point.z / scale.z) + offset.z);
+            r = textureCube(cassetteLabel, rp, vec3(0.0, 0.0, 0.1)).xyz;
             break;
         }
        
