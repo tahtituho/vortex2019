@@ -643,17 +643,17 @@ entity mCappedCylinder(vec3 path, vec2 size, float r, material material) {
 entity mCasette(vec3 path, float scale, float time) {
     material bodyMat = material(
         vec3(0.25, 0.25, 0.25),
-        1.0,
+        0.2,
 
         vec3(0.25, 0.25, 0.25),
-        2.2,
+        0.2,
 
-        vec3(1.0, 1.0, 1.0),
+        vec3(0.0, 1.0, 0.2),
         1.0,
-        100.0,
+        10.0,
 
         0.2,
-        true,
+        false,
         1.5,
         5.5,
         textureOptions(
@@ -671,15 +671,37 @@ entity mCasette(vec3 path, float scale, float time) {
         2.2,
 
         vec3(1.0, 1.0, 1.0),
-        0.0,
-        0.0,
+        10.0,
+        100.0,
 
         0.2,
-        true,
+        false,
         1.5,
         5.5,
         textureOptions(
             51,
+            vec3(0.65, 0.45, 0.0),
+            vec3(88.0, 150.0, 5.0),
+            false
+        )
+    );
+    material tapeMat = material(
+        vec3(0.00, 0.00, 0.00),
+        1.0,
+
+        vec3(0.00, 0.00, 0.00),
+        2.2,
+
+        vec3(1.0, 1.0, 1.0),
+        0.0,
+        0.0,
+
+        0.2,
+        false,
+        1.5,
+        5.5,
+        textureOptions(
+            52,
             vec3(0.65, 0.45, 0.0),
             vec3(88.0, 150.0, 5.0),
             false
@@ -702,7 +724,7 @@ entity mCasette(vec3 path, float scale, float time) {
     float copyHole = sdBox(translate(sPath, vec3(-90.0, 65.0, 0.0)), vec3(0.0), vec3(6.25, 5.0, 5.0), 0.0) * scale;
    
     float bottom = sdBox(translate(sPath, vec3(-25.0, -63.6, 0.0)), vec3(0.0, 0.0, 0.0), vec3(13.0, 2.0, 12.0), 0.0) * scale;
-    vec2Tuple gearRepeat = repeatPolar(rotZ(translate(sPath, vec3(-21.3 - 22.0, 11.0, 0.0)), time * gearDir).xy, 6);
+    vec2Tuple gearRepeat = repeatPolar(rotZ(translate(sPath, vec3(-45.0, 11.0, 0.0)), time * gearDir).xy, 6);
     float gears = sdBox(vec3(gearRepeat.first, sPath.z) - vec3(9.0, 0.0, 0.0), vec3(0.0), vec3(1.5, 1.5, 1.5), 0.0) * scale; 
     float body = opSmoothUnion(bottom, opSmoothSubtraction(copyHole, opSmoothSubtraction(bodyLowerEmpty, opSmoothUnion(gears, opSmoothSubtraction(pinHole2, opSmoothSubtraction(pinHole1, opSmoothSubtraction(gearHole, opSmoothSubtraction(centerHole, opSmoothUnion(opSmoothUnion(bodyBase, bodySideOverHang, 0.0), bodyLowerOverHangUnion, 0.0), 0.0), 0.0), 0.0), 0.0), 0.0), 0.0), 0.0), 0.0);
    
@@ -719,7 +741,19 @@ entity mCasette(vec3 path, float scale, float time) {
     cass.point = sPath;
     cass.material = bodyMat;
     cass.needNormals = true;
-    return opSmoothSubtraction(label, cass, 0.0, 0.0);
+
+    entity tape;
+    vec3 tapePath = path / scale;
+    float tapeX = smoothstep(-65.0, 65.0, tapePath.x);
+    //tapePath = rotZ(tapePath, sin(tapeX * 5.0) * cos(tapeX * 2.2));
+    //tapePath = rotZ(tapePath, cos(tapeX * 2.0) * cos(tapeX * 4.2));
+    //tapePath = rotZ(tapePath, pow(tapeX, 2.0)); 
+    tapePath = translate(tapePath, vec3(0.0, (pow(tapeX - 0.5, 2.0)) * 150.0, 0.0));
+    //
+    tape.dist = sdBox(translate(tapePath, vec3(0.0, -99.6, 0.0)), vec3(0.0), vec3(70.0, 0.2, 8.6), 0.0) * scale;
+    tape.material = tapeMat;
+    tape.needNormals = true;
+    return opSmoothUnion(tape, opSmoothSubtraction(label, cass, 0.0, 0.0), 0.0, 0.0);
 }
 
 entity scene(vec3 path, vec2 uv)
@@ -812,8 +846,8 @@ entity scene(vec3 path, vec2 uv)
         comb.needNormals = true;
         return comb;
     }
-    else if(a == 2) {
-        entity cass = mCasette(rotY(rotX(path, time), time / 2), 0.01, time);
+    else if(a == 5) {
+        entity cass = mCasette(rot(path, vec3(-0.35, 0.21, -0.45)), 1.0, time);
         return cass;
     }
  
@@ -936,9 +970,9 @@ float plot(float pct, float thickness, vec2 position) {
 vec4 background(vec2 uv) {
     int a = int(act);
     vec4 r = vec4(0.0);
-    if(a == 2) {
-        r.xyz = vec3(0.0);
-        r.w = 1.0;
+    if(a == 5) {
+        r.xyz = vec3(0.3, 0.3, 0.3);
+        r.w = 1.1;
     }
 
     return r;
@@ -1011,8 +1045,9 @@ vec3 processColor(hit h, vec3 rd, vec3 eye, vec2 uv, vec3 lp)
     
     result = fog(result, fogColor, h.dist, fogIntensity);
     result = mix(result, bg.rgb, bg.w);
-   
+    
     float gamma = 2.2;
+
     vec3 correct = pow(result, vec3(1.0 / gamma));
    
     return vec3(correct);
