@@ -102,6 +102,13 @@
                 "track": "fog:intensity",
                 "variable": "fogIntensity"
             }
+        },
+        {
+            "type": "float1",
+            "name": {
+                "track": "scene11:terraintype",
+                "variable": "terrainType"
+            }
         }
     ]
 }

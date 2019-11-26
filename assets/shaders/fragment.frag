@@ -19,6 +19,9 @@ uniform vec3 lightPosition;
 uniform vec3 fogColor;
 uniform float fogIntensity;
 
+// Scene 10
+uniform float terrainType;
+
 uniform sampler2D bogdan;
 
 in float[12] sines;
@@ -571,6 +574,31 @@ vec3 boxFold(vec3 z, vec3 r) {
     return z1;
 }
 
+vec2 spiral(float n) {
+    float k=ceil((sqrt(n)-1)/2);
+    float t=2*k+1;
+    float m=pow(t, 2);
+    t=t-1;
+    if (n>=m-t) {
+        return vec2(k-(m-n),-k);
+    }
+    else {
+        m = m-t;
+    }
+    if (n>=m-t) {
+        return vec2(-k,-k+(m-n));
+    }   
+    else {
+        m = m-t;
+    }
+    if (n>=m-t) {
+        return vec2(-k+(m-n),k);
+    } 
+    else {
+        return vec2(k,k-(m-n-t));
+    }
+}
+
 entity mPlane(vec3 p, vec3 pos, vec4 n, material material)
 {
     entity m;
@@ -625,58 +653,58 @@ entity mTerrain(vec3 path, vec3 par, material material) {
     float s = 1.0;
     vec3Tuple p1 = repeat(path, vec3(s * 2.5, 0.0, s * 2.5));
 
-    
-    float a = length(p1.second.xz);
-    float b = (1.0 - smoothstep(-4.0, 10.0, a)) * 15.0;
-    float c = fract(p1.second.x / 2);
-    float d = fract(p1.second.z / 2);
-    float e = sin(pow(p1.second.x, 2.0)) + 1.0 * (sin(time * 5.0) + 1.0);
     float timer = floor(smoothstep(0, 5, tan(time)) * 100);
     float timer2 = floor(smoothstep(0, 5, tan(time + 10)) * 100);
     float color = smoothstep(0, 1, sin(time*5.0));
     float midtotimer = floor(length(p1.second.xz));
     float ramp = midtotimer + 1;
     float ramp2 = midtotimer - 1;
-    if (midtotimer == timer && timer > 0) {
-    //if ((p1.second.x) == timer || abs(p1.second.z) == timer) {
-        material.ambient = vec3(1.0, 1.0, 1.0);
-        m = mBox(translate(p1.first, vec3(0.0, midtotimer, 0.0)), vec3(s, s, s), 0.05, material);
-    }
-    else if (midtotimer == timer2 && timer2 > 0) {
-        material.ambient = vec3(1.0, 1.0, 1.0);
-        m = mBox(translate(p1.first, vec3(0.0, midtotimer, 0.0)), vec3(s, s, s), 0.05, material);
-    }
-    else if (ramp == timer || ramp2 == timer && timer > 0) {
-        material.ambient = vec3(1.0, 0.0, 0.0);
-        m = mBox(translate(p1.first, vec3(0.0, 2.0, 0.0)), vec3(s, s, s), 0.05, material);
-    }
-    else if (noise(p1.second.x) > 0.9 && noise(p1.second.z) < 0.1) {
-        material.ambient = vec3(1.0, 0.0, 0.0);
-        float coeff;
-        if (sin(time) > 0) {
-            coeff = 0;
+    if (terrainType == 1) {
+        if (midtotimer == timer && timer > 0) {
+        //if ((p1.second.x) == timer || abs(p1.second.z) == timer) {
+            material.ambient = vec3(1.0, 1.0, 1.0);
+            m = mBox(translate(p1.first, vec3(0.0, midtotimer, 0.0)), vec3(s, s, s), 0.05, material);
+        }
+        else if (midtotimer == timer2 && timer2 > 0) {
+            material.ambient = vec3(1.0, 1.0, 1.0);
+            m = mBox(translate(p1.first, vec3(0.0, midtotimer, 0.0)), vec3(s, s, s), 0.05, material);
+        }
+        else if (ramp == timer || ramp2 == timer && timer > 0) {
+            material.ambient = vec3(1.0, 0.0, 0.0);
+            m = mBox(translate(p1.first, vec3(0.0, 2.0, 0.0)), vec3(s, s, s), 0.05, material);
         }
         else {
-            coeff = 1;
+            material.ambient = vec3(0.2, 0.2, 0.2);
+            m = mBox(p1.first, vec3(s, s, s), 0.05, material);
         }
-        m = mBox(translate(p1.first, vec3(0.0, sin(time * 20 * coeff) + 2.0, 0.0)), vec3(s, s, s), 0.05, material);
     }
-
- /*   if (spiral(floor((sin(time * 1.5) + 1) * 150)) == p1.second.xz) {
-        material.ambient = vec3(1.0, 0.0, 0.0);
-        m = mBox(translate(p1.first, vec3(0.0, 2, 0.0)), vec3(s, s, s), 0.05, material);
+    else if (terrainType == 2) {
+        if (noise(p1.second.x) > 0.9 && noise(p1.second.z) < 0.1) {
+            material.ambient = vec3(1.0, 0.0, 0.0);
+            float coeff;
+            if (sin(time) > 0) {
+                coeff = 0;
+            }
+            else {
+                coeff = 1;
+            }
+            m = mBox(translate(p1.first, vec3(0.0, sin(time * 20 * coeff) + 2.0, 0.0)), vec3(s, s, s), 0.05, material);
+        }
+        else {
+            material.ambient = vec3(0.2, 0.2, 0.2);
+            m = mBox(p1.first, vec3(s, s, s), 0.05, material);
+        }
     }
-*/    else {
-        material.ambient = vec3(0.2, 0.2, 0.2);
-        m = mBox(p1.first, vec3(s, s, s), 0.05, material);
+    else if (terrainType == 3) {
+        if (spiral(floor((sin(time * 1.5) + 1) * 150)) == p1.second.xz) {
+            material.ambient = vec3(1.0, 0.0, 0.0);
+            m = mBox(translate(p1.first, vec3(0.0, 2, 0.0)), vec3(s, s, s), 0.05, material);
+        }
+        else {
+            material.ambient = vec3(0.2, 0.2, 0.2);
+            m = mBox(p1.first, vec3(s, s, s), 0.05, material);
+        }
     }
-
-    /*if ( c > 0 && d > 0 ) {
-        material.ambient = vec3(0.5, 0.5, 0.5);
-    }
-    else {
-        material.ambient = vec3(sin(time * 10), 0.0, 0.1);
-    }*/
     m.point = p1.first;
     return m;
 }
