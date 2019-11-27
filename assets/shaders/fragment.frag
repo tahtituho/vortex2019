@@ -679,7 +679,7 @@ entity mTerrain(vec3 path, vec3 par, material material) {
         }
     }
     else if (terrainType == 2) {
-        if (noise(p1.second.x) > 0.9 && noise(p1.second.z) < 0.1) {
+        if (noise(p1.second.x) > 0.5 && noise(p1.second.z) < 0.3) {
             material.ambient = vec3(1.0, 0.0, 0.0);
             float coeff;
             if (sin(time) > 0) {
@@ -696,7 +696,7 @@ entity mTerrain(vec3 path, vec3 par, material material) {
         }
     }
     else if (terrainType == 3) {
-        if (spiral(floor((sin(time * 1.5) + 1) * 150)) == p1.second.xz) {
+        if (spiral(floor((sin(time * 0.8) + 1) * 200)) == p1.second.xz) {
             material.ambient = vec3(1.0, 0.0, 0.0);
             m = mBox(translate(p1.first, vec3(0.0, 2, 0.0)), vec3(s, s, s), 0.05, material);
         }
