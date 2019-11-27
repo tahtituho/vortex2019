@@ -696,14 +696,31 @@ entity mTerrain(vec3 path, vec3 par, material material) {
         }
     }
     else if (terrainType == 3) {
+        material.ambient = vec3(0.2, 0.2, 0.2);
+        m = mBox(p1.first, vec3(s, s, s), 0.05, material);
+        for (int y = 0; y < 20; y++) {
+            if (spiral(floor((sin(time * 0.8) + 1) * 200) - y) == p1.second.xz) {
+                material.ambient = vec3(1.0, 0.0, 0.0);
+                m = mBox(translate(p1.first, vec3(0.0, y/5, 0.0)), vec3(s, s, s), 0.05, material);
+            }
+        }
+        /*
         if (spiral(floor((sin(time * 0.8) + 1) * 200)) == p1.second.xz) {
+            material.ambient = vec3(1.0, 0.0, 0.0);
+            m = mBox(translate(p1.first, vec3(0.0, 2, 0.0)), vec3(s, s, s), 0.05, material);
+        }
+        else if (spiral(floor((sin(time * 0.8) + 1) * 200) - 1) == p1.second.xz) {
+            material.ambient = vec3(1.0, 0.0, 0.0);
+            m = mBox(translate(p1.first, vec3(0.0, 2, 0.0)), vec3(s, s, s), 0.05, material);
+        }
+        else if (spiral(floor((sin(time * 0.8) + 1) * 200) - 2) == p1.second.xz) {
             material.ambient = vec3(1.0, 0.0, 0.0);
             m = mBox(translate(p1.first, vec3(0.0, 2, 0.0)), vec3(s, s, s), 0.05, material);
         }
         else {
             material.ambient = vec3(0.2, 0.2, 0.2);
             m = mBox(p1.first, vec3(s, s, s), 0.05, material);
-        }
+        }*/
     }
     m.point = p1.first;
     return m;
