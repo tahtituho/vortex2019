@@ -1,9 +1,8 @@
 {
     "demo": {
-        "name": "skrolli party 2019",
+        "name": "vortex party 2019",
         "group": "tähtituho",
-        "release": false,
-        "log": true
+        "release": false
     },
     "screen": {
         "width": 1280,
@@ -23,11 +22,66 @@
         "vertex": "assets\\shaders\\vertex.vert",
         "fragment": "assets\\shaders\\fragment.frag",
         "majorVersion": 3,
-        "minorVersion": 3
+        "minorVersion": 3,
+        "uniforms": [
+            {
+                "variable": "time",
+                "track": "time"
+            },
+            {
+                "variable": "resolution",
+                "track": "resolution"
+            },
+            {
+                "variable": "fade",
+                "track": "common:fade"
+            },
+            {
+                "variable": "act",
+                "track": "common:act"
+            },
+            {
+                "variable": "cameraPosition",
+                "track": "camera:position"
+            },
+            {
+                "variable": "cameraLookAt",
+                "track": "camera:lookat"
+            },
+            {
+                "variable": "cameraFov",
+                "track": "camera:fov"
+            },
+            {
+                "variable": "rayMaxSteps",
+                "track": "march:maxsteps"
+            },
+            {
+                "variable": "rayThreshold",
+                "track": "march:threshold"
+            },
+            {
+                "variable": "lightPosition",
+                "track": "light:position"
+            },
+            {
+                "variable": "fogColor",
+                "track": "fog:color"
+            },
+            {
+                "variable": "fogIntensity",
+                "track": "fog:intensity"
+            }
+        ],
+        "textures": [
+            {
+                "name": "bogdan"
+            }
+        ]
     },
 	 "assets": [
         {
-            "type": "texture",
+            "type": "staticTexture",
             "name": "bogdan",
             "file": "assets\\textures\\bogdan.png"
         }
@@ -35,73 +89,43 @@
     "tracks": [
         {
             "type": "float1",
-            "name": {
-                "track": "common:act",
-                "variable": "act"
-            }
+            "track": "common:act"
         },
         {
             "type": "float3",
-            "name": {
-                "track": "common:fade",
-                "variable": "fade"
-            }
+            "track": "common:fade"
         },
         {
             "type": "float3",
-            "name": {
-                "track": "camera:position",
-                "variable": "cameraPosition"
-            }
+            "track": "camera:position"
         },
         {
             "type": "float3",
-            "name": {
-                "track": "camera:lookat",
-                "variable": "cameraLookAt"
-            }
+            "track": "camera:lookat"
         },
         {
             "type": "float1",
-            "name": {
-                "track": "camera:fov",
-                "variable": "cameraFov"
-            }
+            "track": "camera:fov"
         },
         {
             "type": "float1",
-            "name": {
-                "track": "march:maxsteps",
-                "variable": "rayMaxSteps"
-            }
+            "track": "march:maxsteps"
         },
         {
             "type": "float1",
-            "name": {
-                "track": "march:threshold",
-                "variable": "rayThreshold"
-            }
+            "track": "march:threshold"
         },
         {
             "type": "float3",
-            "name": {
-                "track": "light:position",
-                "variable": "lightPosition"
-            }
+            "track": "light:position"
         },
         {
             "type": "float3",
-            "name": {
-                "track": "fog:color",
-                "variable": "fogColor"
-            }
+            "track": "fog:color"
         },
         {
             "type": "float1",
-            "name": {
-                "track": "fog:intensity",
-                "variable": "fogIntensity"
-            }
+            "track": "fog:intensity"
         }
     ]
 }
