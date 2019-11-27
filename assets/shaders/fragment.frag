@@ -653,20 +653,19 @@ entity mTerrain(vec3 path, vec3 par, material material) {
     float s = 5.0;
     vec3Tuple p1 = repeat(path, vec3(s * 2.5, 0.0, s * 2.5));
 
-    float timer = floor(smoothstep(0, 5, tan(time)) * 100);
-    float timer2 = floor(smoothstep(0, 5, tan(time + 10)) * 100);
-    float color = smoothstep(0, 1, sin(time*5.0));
-    float midtotimer = floor(length(p1.second.xz));
-    float ramp = midtotimer + 1;
-    float ramp2 = midtotimer - 1;
+    // Ripple effect
     if (terrainType == 1) {
+        float timer = floor(smoothstep(0, 5, tan(time)) * 100);
+        float timer2 = floor(smoothstep(0, 5, tan(time - 10)) * 100);
+        float midtotimer = floor(length(p1.second.xz));
+        float ramp = midtotimer + 1;
+        float ramp2 = midtotimer - 1;
         if (midtotimer == timer && timer > 0) {
-        //if ((p1.second.x) == timer || abs(p1.second.z) == timer) {
             material.ambient = vec3(1.0, 1.0, 1.0);
             m = mBox(translate(p1.first, vec3(0.0, midtotimer, 0.0)), vec3(s, s, s), 0.05, material);
         }
         else if (midtotimer == timer2 && timer2 > 0) {
-            material.ambient = vec3(1.0, 1.0, 1.0);
+            material.ambient = vec3(1.0, 0.0, 0.0);
             m = mBox(translate(p1.first, vec3(0.0, midtotimer, 0.0)), vec3(s, s, s), 0.05, material);
         }
         else if (ramp == timer || ramp2 == timer && timer > 0) {
@@ -678,6 +677,7 @@ entity mTerrain(vec3 path, vec3 par, material material) {
             m = mBox(p1.first, vec3(s, s, s), 0.05, material);
         }
     }
+    // Random boxes
     else if (terrainType == 2) {
         if (noise(p1.second.x) > 0.5 && noise(p1.second.z) < 0.3) {
             material.ambient = vec3(1.0, 0.0, 0.0);
@@ -695,13 +695,14 @@ entity mTerrain(vec3 path, vec3 par, material material) {
             m = mBox(p1.first, vec3(s, s, s), 0.05, material);
         }
     }
+    // Spiral worm
     else if (terrainType == 3) {
         material.ambient = vec3(0.2, 0.2, 0.2);
         m = mBox(p1.first, vec3(s, s, s), 0.05, material);
-        for (int y = 0; y < 20; y++) {
-            if (spiral(floor((sin(time * 0.8) + 1) * 200) - y) == p1.second.xz) {
+        for (int y = 0; y < 10; y++) {
+            if (spiral(22 - y) == p1.second.xz) {
                 material.ambient = vec3(1.0, 0.0, 0.0);
-                m = mBox(translate(p1.first, vec3(0.0, y/5, 0.0)), vec3(s, s, s), 0.05, material);
+                m = mBox(translate(p1.first, vec3(0.0, 4, 0.0)), vec3(s, s, s), 0.05, material);
             }
         }
         /*
