@@ -711,7 +711,7 @@ entity scene(vec3 path, vec2 uv)
             0.4,
             1.0, 
             true,
-            2.5,
+            0.5,
             5.5,
             textureOptions(
                 0,
@@ -740,9 +740,11 @@ entity scene(vec3 path, vec2 uv)
             )
         );
         float s = 1.0;
-        vec3Tuple p1 = repeat(path, vec3(s * 5.5, 0.0, s * 5.5));
+        vec3Tuple p1 = repeat(path, vec3(s * 3.5, 0.0, s * 3.5));
         
-        entity dickles = mCapsule(opBend(rotY(p1.first, 2), rand(p1.second.xz) * 0.3 * (sin(time * 16.5 + p1.second.x)) * 0.5), vec3(1), vec3(1.0, 4.0, 1.0), vec3(1, 0, 0), 1.0, testmat);
+        //entity dickles = mCapsule(opBend(rotY(p1.first, 2), rand(p1.second.xz) * 0.3 * (sin(time * 16.5 + p1.second.x)) * 0.5), vec3(1), vec3(1.0, 4.0, 1.0), vec3(1, 0, 0), 1.0, testmat);
+        entity dickles = mCapsule(rotX(rotY(p1.first, 2), rand(p1.second.xz) * 0.3 * (sin(time * 16.5 + p1.second.x)) * smoothstep(0, 4, p1.first.y)), vec3(1), vec3(1.0, 4.0, 1.0), vec3(1, 0, 0), 1.0, testmat);
+        
         entity floor = mPlane(path, vec3(0, -0.2, 0), vec4(0, 1, 0, 1), testmat2);
 
         return opSmoothUnion(floor, dickles, 2, 0.01);
