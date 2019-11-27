@@ -650,7 +650,7 @@ entity mTorus(vec3 path, vec2 dim, material material) {
 
 entity mTerrain(vec3 path, vec3 par, material material) {
     entity m;
-    float s = 1.0;
+    float s = 5.0;
     vec3Tuple p1 = repeat(path, vec3(s * 2.5, 0.0, s * 2.5));
 
     float timer = floor(smoothstep(0, 5, tan(time)) * 100);
