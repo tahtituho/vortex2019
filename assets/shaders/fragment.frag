@@ -727,9 +727,11 @@ entity tunnelSegment(vec3 path, float r1, float r2, float h, float notch, int nu
 
 }  
 
-entity tunnnel(vec3 path) {
+entity tunnel(vec3 path, float time) {
     vec3Tuple repeated = repeat(path, vec3(0.0, 1.0, 0.0));
-    return tunnelSegment(rot(repeated.first, vec3(0.0, mod(repeated.second.y, 8) * (time / 20.0), 0.0)), 2.0, 1.5, 0.2, 0.25, 6 + int(mod(repeated.second.y, 5) * 2.0), 1.0);   
+    vec3 tunnelPosition = repeated.first;
+    tunnelPosition = translate(tunnelPosition, vec3(0.0, 0.0, sin(repeated.second.y / 5.0) * 1.0));
+    return tunnelSegment(rot(tunnelPosition, vec3(0.0, mod(repeated.second.y, 8) * (time / 20.0), 0.0)), 2.0, 1.5, 0.2, 0.25, 6 + int(mod(repeated.second.y, 5) * 2.0), 1.0);   
 }
 
 entity scene(vec3 path, vec2 uv)
@@ -852,7 +854,7 @@ entity scene(vec3 path, vec2 uv)
     else if(a == 3) {
         vec3 r = rot(path, vec3(PI / 2.0, 0.0, time / 10.0));
         
-        entity e = tunnnel(r - vec3(0.0, time / .5, 0.0));
+        entity e = tunnel(r - vec3(0.0, time / .5, 0.0), time);
         //e.dist += (displacement(r, vec3(0.10, 0.10, 0.1)) * time);
         return e;
     }
