@@ -642,16 +642,16 @@ entity mCappedCylinder(vec3 path, vec2 size, float r, material material) {
 entity mMandleMaze(vec3 path, float time, float scale) {
     material m1 = material(
         vec3(0.3, 0.3, 0.3),
-        1.0,
+        5.0,
 
         vec3(1.0, 1.0, 1.0),
-        1.0,
+        5.0,
 
-        vec3(0.0, 0.0, 0.0),
-        0.0,
-        0.0,
+        vec3(0.0, 0.0, 1.0),
+        500.0,
+        5.0,
 
-        0.5,
+        0.9,
         true,
         0.5,
         5.5,
@@ -665,14 +665,13 @@ entity mMandleMaze(vec3 path, float time, float scale) {
 
     vec3Tuple rPath = repeat(path, vec3(4.0));
     vec3 sPath = rPath.first / scale;
-    float offset = rPath.second.z / 10.0;
+    float offset = rPath.second.z / 10.0;// + (sin(time) / 10.0);
     entity maze = mMandleBox(sPath, m1, 2.0, 2.2, 0.15, 2.6  + offset, 1.6, 15, 100.0, 0.18 + offset, 1.0);
     maze.dist *= scale;
     maze.needNormals = true;
     maze.point = sPath;
 
     entity mazeCut = mSphere(sPath, 13.5, m1);
-    //mazeCut.dist += displacement(sPath, vec3(1.0)) / 2.0;
     mazeCut.dist *= scale;
     mazeCut.needNormals = true;
     mazeCut.point = sPath;
@@ -769,7 +768,7 @@ entity scene(vec3 path, vec2 uv)
         comb.needNormals = true;
         return comb;
     }
-    else if(a == 4) {
+    else if(a == 2) {
         entity mandel = mMandleMaze(path, time, 0.2);
         return mandel;
     }
@@ -982,6 +981,7 @@ vec4 postProcess(vec3 original, vec2 uv) {
 
 vec3 drawMarching(vec2 uv) {
     vec3 camPos = vec3(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+    vec3 cameraLookAt = cameraLookAt;
     vec3 forward = normalize(cameraLookAt - camPos); 
     vec3 right = normalize(vec3(forward.z, 0.0, -forward.x));
     vec3 up = normalize(cross(forward, right)); 
