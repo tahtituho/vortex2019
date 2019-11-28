@@ -774,6 +774,7 @@ entity scene(vec3 path, vec2 uv)
     int a = int(act);
     if(a == 1) {
         vec3 r = rot(path, vec3(time / 2.5, time / 5.0, 0.0));
+        //r = path;
         material m1 = material(
             vec3(1.0, 0.0, 0.0),
             1.0,
@@ -854,7 +855,10 @@ entity scene(vec3 path, vec2 uv)
         
         entity e3 = mBox(rotZ(translate(r, vec3(-0.5, -1.0, -1.0)), 0.7), vec3(1.0), 0.1, 1.0, m3);
         e3.needNormals = true;  
-        return opSmoothUnion(opSmoothUnion(e1, e2, 0.5, 0.0), e3, 0.5, 0.0);
+        entity comb = opSmoothUnion(opSmoothUnion(e1, e2, 0.5, 0.0), e3, 0.5, 0.0);
+        //comb.dist += displacement(r, vec3(3.0));
+        comb.needNormals = true;
+        return comb;
     }
     else if(a == 2) {
         material m1 = material(
