@@ -71,6 +71,26 @@
             {
                 "variable": "fogIntensity",
                 "track": "fog:intensity"
+            },
+            {
+                "variable": "makersPosition",
+                "track": "makers:position"
+            },
+            {
+                "variable": "makersOffset",
+                "track": "makers:offset"
+            },
+            {
+                "variable": "makersTexture",
+                "track": "makers:texture"
+            },
+            {
+                "variable": "demonamePosition",
+                "track": "demoname:position"
+            },
+            {
+                "variable": "demonameOffset",
+                "track": "demoname:offset"
             }
         ],
         "textures": [
@@ -82,6 +102,27 @@
             },
             {
                 "name": "tunnelTexNm"
+            },
+            {
+                "name": "bogdanLogo"
+            },
+            {
+                "name": "codeColho"
+            },
+            {
+                "name": "codeHelgrima"
+            },
+            {
+                "name": "musicMajaniemi"
+            },
+            {
+                "name": "gfxWartti"
+            },
+            {
+                "name": "demoLogo1"
+            },
+            {
+                "name": "demoLogo2"
             }
         ]
     },
@@ -100,6 +141,41 @@
             "type": "staticTexture",
             "name": "tunnelTexNm",
             "file": "assets\\textures\\tunnelnm.png"
+        },
+        {
+            "type": "staticTexture",
+            "name": "bogdanLogo",
+            "file": "assets\\textures\\bogdan_final.png"
+        },
+        {
+            "type": "staticTexture",
+            "name": "codeColho",
+            "file": "assets\\textures\\Code_Colho.png"
+        },
+        {
+            "type": "staticTexture",
+            "name": "codeHelgrima",
+            "file": "assets\\textures\\Code_Helgrima.png"
+        },
+        {
+            "type": "staticTexture",
+            "name": "musicMajaniemi",
+            "file": "assets\\textures\\Music_Majaniemi.png"
+        },
+        {
+            "type": "staticTexture",
+            "name": "gfxWartti",
+            "file": "assets\\textures\\Gfx_Wartti.png"
+        },
+        {
+            "type": "staticTexture",
+            "name": "demoLogo1",
+            "file": "assets\\textures\\Logo_BlindIdiotGod.png"
+        },
+        {
+            "type": "staticTexture",
+            "name": "demoLogo2",
+            "file": "assets\\textures\\Logo_MadGodsGift.png"
         }
     ],
     "tracks": [
@@ -142,6 +218,26 @@
         {
             "type": "float1",
             "track": "fog:intensity"
+        },
+        {
+            "type": "float3",
+            "track": "makers:position"
+        },
+        {
+            "type": "float3",
+            "track": "makers:offset"
+        },
+        {
+            "type": "float1",
+            "track": "makers:texture"
+        },
+        {
+            "type": "float3",
+            "track": "demoname:position"
+        },
+        {
+            "type": "float3",
+            "track": "demoname:offset"
         }
     ]
 }

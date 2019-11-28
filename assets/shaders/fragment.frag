@@ -19,9 +19,22 @@ uniform vec3 lightPosition;
 uniform vec3 fogColor;
 uniform float fogIntensity;
 
+uniform vec3 makersPosition;
+uniform vec3 makersOffset;
+uniform float makersTexture;
+uniform vec3 demonamePosition;
+uniform vec3 demonameOffset;
+
 uniform sampler2D bogdan;
 uniform sampler2D tunnelTex;
 uniform sampler2D tunnelTexNm;
+uniform sampler2D bogdanLogo;
+uniform sampler2D codeColho;
+uniform sampler2D codeHelgrima;
+uniform sampler2D musicMajaniemi;
+uniform sampler2D gfxWartti;
+uniform sampler2D demoLogo1;
+uniform sampler2D demoLogo2;
 
 in float[12] sines;
 in float[12] coses;
@@ -709,10 +722,10 @@ entity tunnelSegment(vec3 path, float r1, float r2, float h, float notch, int nu
 
         0.8,
         true,
-        0.05,
         0.5,
+        5.5,
         textureOptions(
-            2,
+            40,
             vec3(0.0, 0.0, 0.0),
             vec3(5.0, 5.0, 5.0),
             true
@@ -729,42 +742,42 @@ entity tunnelSegment(vec3 path, float r1, float r2, float h, float notch, int nu
 
 }  
 
-entity tunnel(vec3 path) {
+entity tunnel(vec3 path, float time) {
     vec3Tuple repeated = repeat(path, vec3(0.0, .80, 0.0));
-    return tunnelSegment(rot(repeated.first, vec3(0.0, mod(repeated.second.y, 8) * (time / 20.0), 0.0)), 2.0, 1.5, 0.2, 0.25, 6 + int(mod(repeated.second.y, 5) * 2.0), 1.0);   
+    vec3 tunnelPosition = repeated.first;
+    tunnelPosition = translate(tunnelPosition, vec3(0.0, 0.0, sin(repeated.second.y / 5.0) * 1.0));
+    return tunnelSegment(rot(tunnelPosition, vec3(0.0, mod(repeated.second.y, 8) * (time / 20.0), 0.0)), 2.0, 1.5, 0.2, 0.25, 6 + int(mod(repeated.second.y, 5) * 2.0), 1.0); 
 }
 
-entity platforms(vec3 path) {
+entity banner(vec3 path, float scale, int texture, vec3 offset) {
     material m1 = material(
-        vec3(0.0, 0.0, 1.0),
+        vec3(0.5, 0.5, 0.5),
         1.0,
 
         vec3(1.0, 1.0, 1.0),
         1.2,
 
         vec3(1.0, 1.0, 1.0),
-        10.0,
+        1.0,
         20.0,
 
         0.8,
-        true,
+        false,
         1.5,
         2.0,
         textureOptions(
-            2,
-            vec3(1.5, 1.5, 1.5),
-            vec3(2.0, 2.0, 2.0),
-            true
+            texture,
+            offset,
+            vec3(1.0, 1.0, 1.0),
+            false
         )
     );
     entity p;
-    vec3 size = vec3(0.25, 0.2, 0.25);
-    float p1 = sdBox(path, vec3(0.0), size, 0.025);
-    float p2 = sdBox(translate(path, vec3(0.5, 0.0, 0.5)), vec3(0.0), size, 0.025);
-    float p3 = sdBox(translate(path, vec3(-0.5, 0.0, 0.5)), vec3(0.0), size, 0.025);
+    vec3 size = vec3(1.0, 1.0, 1.0);
+    float p1 = sdBox(path / scale, vec3(0.0), size, 0.0);
 
     p.point = path;
-    p.dist = opSmoothUnion(opSmoothUnion(p1, p2, 0.0), p3, 0.0);
+    p.dist = p1 * scale;
     p.material = m1;
     return p;
 }
@@ -879,7 +892,7 @@ entity scene(vec3 path, vec2 uv)
             textureOptions(
                 0,
                 vec3(1.5, 1.5, 1.5),
-                vec3(2.0, 2.0, 2.0),
+                vec3(3.0, 2.0, 2.0),
                 false
             )
         );
@@ -890,13 +903,11 @@ entity scene(vec3 path, vec2 uv)
         e2.needNormals = true;
         return e1;
     }
-    else if(a == 3) {
+    else if(a == 4) {
         vec3 r = rot(path, vec3(PI / 2.0, 0.0, time / 10.0));
-        
-        entity e = tunnel(r - vec3(0.0, time, 0.0));
-        vec3Tuple platformRepeat = repeat(translate(path, vec3(0.0, -0.75, time)), vec3(0.0, 0.0, 2.0));
-        entity platform = platforms(platformRepeat.first);
-        return opSmoothUnion(platform, e, 0.0, 0.0);
+        entity e = tunnel(r - vec3(0.0, time / .5, 0.0), time);
+        entity m = banner(translate(rot(path, vec3(time)), makersPosition), 0.5, int(makersTexture), makersOffset);
+        return opSmoothUnion(m, e, 0.25, 0.0);
 
     }
  
@@ -1035,9 +1046,39 @@ vec3 generateTexture(int index, vec3 point, vec3 offset, vec3 scale) {
             r = textureCube(bogdan, rp, vec3(0.0, 0.0, 0.1)).xyz;
             break;
         }
-        case 2: {
+        case 40: {
             vec3 rp = vec3((point.x / scale.x) + offset.x, (point.y / scale.y) + offset.y, (point.z / scale.z) + offset.z);
             r = textureCube(tunnelTex, rp, vec3(0.0, 0.0, 0.1)).xyz;
+            break;
+        }
+        case 41: {
+            vec3 rp = vec3((point.x / scale.x) + offset.x, (point.y / scale.y) + offset.y, (point.z / scale.z) + offset.z);
+            r = textureCube(codeColho, rp, vec3(0.0, 0.0, 0.1)).xyz;
+            break;
+        }
+        case 42: {
+            vec3 rp = vec3((point.x / scale.x) + offset.x, (point.y / scale.y) + offset.y, (point.z / scale.z) + offset.z);
+            r = textureCube(codeHelgrima, rp, vec3(0.0, 0.0, 0.1)).xyz;
+            break;
+        }
+        case 43: {
+            vec3 rp = vec3((point.x / scale.x) + offset.x, (point.y / scale.y) + offset.y, (point.z / scale.z) + offset.z);
+            r = textureCube(gfxWartti, rp, vec3(0.0, 0.0, 0.1)).xyz;
+            break;
+        }
+        case 44: {
+            vec3 rp = vec3((point.x / scale.x) + offset.x, (point.y / scale.y) + offset.y, (point.z / scale.z) + offset.z);
+            r = textureCube(musicMajaniemi, rp, vec3(0.0, 0.0, 0.1)).xyz;
+            break;
+        }
+        case 45: {
+            vec3 rp = vec3((point.x / scale.x) + offset.x, (point.y / scale.y) + offset.y, (point.z / scale.z) + offset.z);
+            r = textureCube(demoLogo1, rp, vec3(0.0, 0.0, 0.1)).xyz;
+            break;
+        }
+        case 46: {
+            vec3 rp = vec3((point.x / scale.x) + offset.x, (point.y / scale.y) + offset.y, (point.z / scale.z) + offset.z);
+            r = textureCube(demoLogo2, rp, vec3(0.0, 0.0, 0.1)).xyz;
             break;
         }
        
@@ -1106,14 +1147,13 @@ vec4 postProcess(vec3 original, vec2 uv) {
 }
 
 vec3 drawMarching(vec2 uv) {
-    vec3 camPos = vec3(cameraPosition.x, cameraPosition.y, cameraPosition.z);
-    vec3 forward = normalize(cameraLookAt - camPos); 
+    vec3 forward = normalize(cameraLookAt - cameraPosition); 
     vec3 right = normalize(vec3(forward.z, 0.0, -forward.x));
     vec3 up = normalize(cross(forward, right)); 
     
     vec3 rd = normalize(forward + cameraFov * uv.x * right + cameraFov * uv.y * up);
     
-    vec3 ro = vec3(camPos);
+    vec3 ro = vec3(cameraPosition);
  
     hit tt = raymarch(ro, rd, uv);
     return processColor(tt, rd, ro, uv, lightPosition); 
