@@ -905,7 +905,7 @@ entity scene(vec3 path, vec2 uv)
     }
     else if(a == 4) {
         vec3 r = rot(path, vec3(PI / 2.0, 0.0, time / 10.0));
-        entity e = tunnel(r - vec3(0.0, time / .5, 0.0), time);
+        entity e = tunnel(r - vec3(0.0, time / 0.5, 0.0), time);
         entity m = banner(translate(rot(path, vec3(time)), makersPosition), 0.5, int(makersTexture), makersOffset);
         return opSmoothUnion(m, e, 0.25, 0.0);
 
