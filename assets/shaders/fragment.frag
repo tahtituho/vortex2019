@@ -21,6 +21,10 @@ uniform float fogIntensity;
 
 // Scene 10
 uniform float terrainType;
+uniform float ripplePos;
+uniform float snakeLength;
+uniform float snakePos;
+uniform float applePos;
 
 uniform sampler2D bogdan;
 
@@ -655,18 +659,18 @@ entity mTerrain(vec3 path, vec3 par, material material) {
 
     // Ripple effect
     if (terrainType == 1) {
-        float timer = floor(smoothstep(0, 5, tan(time)) * 100);
-        float timer2 = floor(smoothstep(0, 5, tan(time - 10)) * 100);
+        float timer = floor(ripplePos);
+        float timer2 = floor(ripplePos) - 5;
         float midtotimer = floor(length(p1.second.xz));
         float ramp = midtotimer + 1;
         float ramp2 = midtotimer - 1;
         if (midtotimer == timer && timer > 0) {
             material.ambient = vec3(1.0, 1.0, 1.0);
-            m = mBox(translate(p1.first, vec3(0.0, midtotimer, 0.0)), vec3(s, s, s), 0.05, material);
+            m = mBox(translate(p1.first, vec3(0.0, 10, 0.0)), vec3(s, s, s), 0.05, material);
         }
         else if (midtotimer == timer2 && timer2 > 0) {
             material.ambient = vec3(1.0, 0.0, 0.0);
-            m = mBox(translate(p1.first, vec3(0.0, midtotimer, 0.0)), vec3(s, s, s), 0.05, material);
+            m = mBox(translate(p1.first, vec3(0.0, 5, 0.0)), vec3(s, s, s), 0.05, material);
         }
         else if (ramp == timer || ramp2 == timer && timer > 0) {
             material.ambient = vec3(1.0, 0.0, 0.0);
@@ -699,29 +703,21 @@ entity mTerrain(vec3 path, vec3 par, material material) {
     else if (terrainType == 3) {
         material.ambient = vec3(0.2, 0.2, 0.2);
         m = mBox(p1.first, vec3(s, s, s), 0.05, material);
-        for (int y = 0; y < 10; y++) {
-            if (spiral(22 - y) == p1.second.xz) {
+        vec2 applePosV = vec2(0.0, 0.0);
+        if (applePos > 0) {
+            applePosV = spiral(floor(applePos));
+        }
+        for (int y = 0; y < snakeLength; y++) {
+            vec2 spiralPos = spiral(floor(snakePos) - y);
+            if (spiralPos == p1.second.xz) {
                 material.ambient = vec3(1.0, 0.0, 0.0);
                 m = mBox(translate(p1.first, vec3(0.0, 4, 0.0)), vec3(s, s, s), 0.05, material);
             }
+            else if (applePosV == p1.second.xz && applePosV.x > 0) {
+                material.ambient = vec3(0.0, 1.0, 0.0);
+                m = mBox(translate(p1.first, vec3(0.0, 4, 0.0)), vec3(s, s, s), 0.05, material);
+            }
         }
-        /*
-        if (spiral(floor((sin(time * 0.8) + 1) * 200)) == p1.second.xz) {
-            material.ambient = vec3(1.0, 0.0, 0.0);
-            m = mBox(translate(p1.first, vec3(0.0, 2, 0.0)), vec3(s, s, s), 0.05, material);
-        }
-        else if (spiral(floor((sin(time * 0.8) + 1) * 200) - 1) == p1.second.xz) {
-            material.ambient = vec3(1.0, 0.0, 0.0);
-            m = mBox(translate(p1.first, vec3(0.0, 2, 0.0)), vec3(s, s, s), 0.05, material);
-        }
-        else if (spiral(floor((sin(time * 0.8) + 1) * 200) - 2) == p1.second.xz) {
-            material.ambient = vec3(1.0, 0.0, 0.0);
-            m = mBox(translate(p1.first, vec3(0.0, 2, 0.0)), vec3(s, s, s), 0.05, material);
-        }
-        else {
-            material.ambient = vec3(0.2, 0.2, 0.2);
-            m = mBox(p1.first, vec3(s, s, s), 0.05, material);
-        }*/
     }
     m.point = p1.first;
     return m;

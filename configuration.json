@@ -106,8 +106,36 @@
         {
             "type": "float1",
             "name": {
-                "track": "scene11:terraintype",
+                "track": "scene10:terraintype",
                 "variable": "terrainType"
+            }
+        },
+        {
+            "type": "float1",
+            "name": {
+                "track": "scene10:ripplepos",
+                "variable": "ripplePos"
+            }
+        },
+        {
+            "type": "float1",
+            "name": {
+                "track": "scene10:snakelength",
+                "variable": "snakeLength"
+            }
+        },
+        {
+            "type": "float1",
+            "name": {
+                "track": "scene10:snakepos",
+                "variable": "snakePos"
+            }
+        },
+        {
+            "type": "float1",
+            "name": {
+                "track": "scene10:applepos",
+                "variable": "applePos"
             }
         }
     ]
