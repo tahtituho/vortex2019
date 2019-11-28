@@ -746,7 +746,7 @@ entity tunnel(vec3 path, float time) {
     vec3Tuple repeated = repeat(path, vec3(0.0, .80, 0.0));
     vec3 tunnelPosition = repeated.first;
     tunnelPosition = translate(tunnelPosition, vec3(0.0, 0.0, sin(repeated.second.y / 5.0) * 1.0));
-    return tunnelSegment(rot(tunnelPosition, vec3(0.0, mod(repeated.second.y, 8) * (time / 20.0), 0.0)), 2.0, 1.5, 0.2, 0.25, 6 + int(mod(repeated.second.y, 5) * 2.0), 1.0); 
+    return tunnelSegment(rot(tunnelPosition, vec3(0.0, mod(repeated.second.y, 8) * (time / 20.0), 0.0)), 2.0, 1.5, 0.2, 0.25, 6 + int(mod(repeated.second.y, 5) * 2.0), 1.0);   
 }
 
 entity banner(vec3 path, float scale, int texture, vec3 offset) {
