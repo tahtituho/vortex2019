@@ -25,6 +25,7 @@ uniform float ripplePos;
 uniform float snakeLength;
 uniform float snakePos;
 uniform float applePos;
+uniform float randPopper;
 
 uniform sampler2D bogdan;
 
@@ -652,6 +653,7 @@ entity mTorus(vec3 path, vec2 dim, material material) {
     return m;
 }
 
+
 entity mTerrain(vec3 path, vec3 par, material material) {
     entity m;
     float s = 5.0;
@@ -683,16 +685,11 @@ entity mTerrain(vec3 path, vec3 par, material material) {
     }
     // Random boxes
     else if (terrainType == 2) {
-        if (noise(p1.second.x) > 0.5 && noise(p1.second.z) < 0.3) {
+        vec2 randomizer = vec2(rand(p1.second.xz), randPopper);
+        if ( rand(randomizer) < 0.1) {
             material.ambient = vec3(1.0, 0.0, 0.0);
-            float coeff;
-            if (sin(time) > 0) {
-                coeff = 0;
-            }
-            else {
-                coeff = 1;
-            }
-            m = mBox(translate(p1.first, vec3(0.0, sin(time * 20 * coeff) + 2.0, 0.0)), vec3(s, s, s), 0.05, material);
+            float coeff = 1;
+            m = mBox(translate(p1.first, sin(time * randPopper)*vec3(0.0, rand(p1.second.xz) * 5, 0.0)), vec3(s, s, s), 0.05, material);
         }
         else {
             material.ambient = vec3(0.2, 0.2, 0.2);
@@ -817,42 +814,8 @@ entity scene(vec3 path, vec2 uv)
         return comb;
     }
     else if (a == 10) {
-        vec3 planecolor;
-        //vec3 wallcolor;
-        
-        if(fract(path.x + floor(path.y*90.0) * 0.5 + floor(path.z*90.0) * 0.5) < 0.5)
-        {
-            planecolor = vec3(1.0, sin(time*10.5)*0.9, 0.0);
-        }
-        else {
-            planecolor = vec3(0.0, 0.0, 0.0);
-        }
-        /*if(fract(path.x) < 0.2 || fract(path.z + path.y) > 0.8)
-        {   
-            wallcolor = vec3(0.0, 0.0, 1.0);
-        }
-        else {
-            wallcolor = vec3(0.0, 0.0, 0.0);
-        }
-        material bluemat = material(
-            wallcolor,
-            1.0,
-            vec3(0.5, 0.5, 0.5),
-            1.3,
-            vec3(0.0, 0.0, 0.5),
-            10.0,
-            0.4,
-            1.0, 
-            true,
-            textureOptions(
-                1,
-                vec3(1.0),
-                vec3(1.0),
-                false
-            )
-        );*/
         material planemat = material(
-            planecolor,
+            vec3(0.0, 0.0, 0.0),
             1.0,
             vec3(0.5, 0.5, 0.5),
             1.3,
@@ -870,21 +833,14 @@ entity scene(vec3 path, vec2 uv)
                 false
             )
         );
-        //entity box = mBox(path, vec3(0.1, 800.0, 800.0), 0.0, planemat);
-        //entity planebottom = mPlane(path, vec3(0.0, -20.0, 0.0), normalize(vec4(1.0, 0.0, 0.0, 0.0)), planemat);
+
         entity terrain = mTerrain(path, vec3(100.0, 20.0, 1.0), planemat);
         float saizu = 1;
         entity guard = mBoxCheap(path, vec3(saizu), planemat);
         guard.dist = -guard.dist;
         guard.dist = abs(guard.dist) + saizu * 0.1;
-        //entity torusf = mTorusFractal(path, 3, 1.0, 0.0, planemat, 5, 3);
-        //entity hugebox = mBox(path, vec3(999999999.0, 999999999.0, 999999.0), 0.0, bluemat);
-        //entity roombox = mBox(path, vec3(150.0, 150.0, 150.0), 0.0, bluemat);
-        //roombox.needNormals = true;
-        //hugebox.needNormals = true;
-        //entity stuff = opUnion(torusf, terrain);
+
         return opUnion(terrain, guard);
-        //return opUnion(opSubtraction(roombox, hugebox), terrain);
     }
  
 } 

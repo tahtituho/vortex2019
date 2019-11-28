@@ -137,6 +137,13 @@
                 "track": "scene10:applepos",
                 "variable": "applePos"
             }
+        },
+        {
+            "type": "float1",
+            "name": {
+                "track": "scene10:randpopper",
+                "variable": "randPopper"
+            }
         }
     ]
 }

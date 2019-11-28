@@ -29,7 +29,7 @@ color="ff60b250">
 	<track name="camera:position.x" folded="0" muteKeyCount="0"
 color="ff4fb292">
 		<key row="0" value="2.000000" interpolation="0" />
-		<key row="192" value="-100.000000" interpolation="0" />
+		<key row="192" value="100.000000" interpolation="0" />
 		<key row="696" value="200.000000" interpolation="0" />
 		<key row="754" value="50.000000" interpolation="0" />
 		<key row="780" value="100.000000" interpolation="0" />
@@ -44,7 +44,7 @@ color="ff4f71b2">
 	<track name="camera:position.z" folded="0" muteKeyCount="0"
 color="ff8850b2">
 		<key row="0" value="5.499980" interpolation="0" />
-		<key row="192" value="-100.000000" interpolation="0" />
+		<key row="192" value="100.000000" interpolation="0" />
 		<key row="696" value="200.000000" interpolation="0" />
 		<key row="754" value="50.000000" interpolation="0" />
 		<key row="780" value="100.000000" interpolation="0" />
@@ -52,13 +52,13 @@ color="ff8850b2">
 	<track name="camera:lookat.x" folded="0" muteKeyCount="0"
 color="ffb25091">
 		<key row="0" value="0.000000" interpolation="0" />
-		<key row="192" value="10.000000" interpolation="0" />
+		<key row="192" value="0.000000" interpolation="0" />
 		<key row="696" value="0.000000" interpolation="0" />
 	</track>
 	<track name="camera:lookat.y" folded="0" muteKeyCount="0"
 color="ffb27474">
 		<key row="0" value="0.000000" interpolation="0" />
-		<key row="192" value="0.000000" interpolation="0" />
+		<key row="192" value="1.000000" interpolation="0" />
 		<key row="696" value="0.000000" interpolation="0" />
 	</track>
 	<track name="camera:lookat.z" folded="0" muteKeyCount="0"
@@ -70,12 +70,13 @@ color="ffb28050">
 	<track name="camera:fov" folded="0" muteKeyCount="0"
 color="ffa9b250">
 		<key row="0" value="0.900000" interpolation="0" />
+		<key row="192" value="1.000000" interpolation="0" />
 		<key row="812" value="1.000000" interpolation="0" />
 	</track>
 	<track name="march:maxsteps" folded="0" muteKeyCount="0"
 color="ff60b250">
 		<key row="0" value="64.000000" interpolation="0" />
-		<key row="192" value="32.000000" interpolation="0" />
+		<key row="192" value="64.000000" interpolation="0" />
 	</track>
 	<track name="march:threshold" folded="0" muteKeyCount="0"
 color="ff4fb292">
@@ -145,5 +146,25 @@ color="ffb27474">
 	</track>
 	<track name="scene11:terraintype" folded="0" muteKeyCount="0"
 color="ff4fb292" />
+	<track name="scene10:randpopper" folded="0" muteKeyCount="0"
+color="ffa9b250">
+		<key row="321" value="1.000000" interpolation="0" />
+		<key row="328" value="100.000000" interpolation="0" />
+		<key row="336" value="3.000000" interpolation="0" />
+		<key row="344" value="101.000000" interpolation="0" />
+		<key row="352" value="5.000000" interpolation="0" />
+		<key row="360" value="102.000000" interpolation="0" />
+		<key row="368" value="7.000000" interpolation="0" />
+		<key row="376" value="103.000000" interpolation="0" />
+		<key row="384" value="9.000000" interpolation="0" />
+		<key row="392" value="104.000000" interpolation="0" />
+		<key row="400" value="11.000000" interpolation="0" />
+		<key row="408" value="105.000000" interpolation="0" />
+		<key row="416" value="13.000000" interpolation="0" />
+		<key row="424" value="106.000000" interpolation="0" />
+		<key row="432" value="15.000000" interpolation="0" />
+		<key row="440" value="107.000000" interpolation="0" />
+		<key row="448" value="100.000000" interpolation="0" />
+	</track>
 </tracks>
 	</rootElement>
