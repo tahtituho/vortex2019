@@ -5,6 +5,10 @@ beatsPerMin="125">
 	<track name="common:act" folded="0" muteKeyCount="0"
 color="ffb27474">
 		<key row="0" value="1.000000" interpolation="0" />
+		<key row="192" value="10.000000" interpolation="0" />
+		<key row="448" value="11.000000" interpolation="0" />
+		<key row="832" value="2.000000" interpolation="0" />
+		<key row="1088" value="4.000000" interpolation="0" />
 	</track>
 	<track name="common:fade.x" folded="0" muteKeyCount="0"
 color="ffb28050">
