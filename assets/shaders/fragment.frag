@@ -662,7 +662,6 @@ entity mTerrain(vec3 path, vec3 par, material material) {
     // Ripple effect
     if (terrainType == 1) {
         float timer = floor(ripplePos);
-        float timer2 = floor(ripplePos) - 5;
         float midtotimer = floor(length(p1.second.xz));
         float ramp = midtotimer + 1;
         float ramp2 = midtotimer - 1;
@@ -670,7 +669,7 @@ entity mTerrain(vec3 path, vec3 par, material material) {
             material.ambient = vec3(1.0, 1.0, 1.0);
             m = mBox(translate(p1.first, vec3(0.0, 10, 0.0)), vec3(s, s, s), 0.05, material);
         }
-        else if (midtotimer == timer2 && timer2 > 0) {
+        else if ((midtotimer == (timer - 5) || midtotimer == (timer + 5)) && timer > 0) {
             material.ambient = vec3(1.0, 0.0, 0.0);
             m = mBox(translate(p1.first, vec3(0.0, 5, 0.0)), vec3(s, s, s), 0.05, material);
         }
@@ -704,15 +703,18 @@ entity mTerrain(vec3 path, vec3 par, material material) {
         if (applePos > 0) {
             applePosV = spiral(floor(applePos));
         }
+        if (fade.x == 2) {
+            s = 1;
+        }
         for (int y = 0; y < snakeLength; y++) {
             vec2 spiralPos = spiral(floor(snakePos) - y);
             if (spiralPos == p1.second.xz) {
                 material.ambient = vec3(1.0, 0.0, 0.0);
-                m = mBox(translate(p1.first, vec3(0.0, 4, 0.0)), vec3(s, s, s), 0.05, material);
+                m = mBox(translate(p1.first, vec3(0.0, 5, 0.0)), vec3(s, s, s), 0.05, material);
             }
-            else if (applePosV == p1.second.xz && applePosV.x > 0) {
+            else if (applePosV == p1.second.xz && applePos > 0) {
                 material.ambient = vec3(0.0, 1.0, 0.0);
-                m = mBox(translate(p1.first, vec3(0.0, 4, 0.0)), vec3(s, s, s), 0.05, material);
+                m = mBox(translate(p1.first, vec3(0.0, 5, 0.0)), vec3(s, s, s), 0.05, material);
             }
         }
     }
