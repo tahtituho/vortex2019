@@ -71,11 +71,33 @@
             {
                 "variable": "fogIntensity",
                 "track": "fog:intensity"
+            },
+            {
+                "variable": "groupNamePosition",
+                "track": "groupname:position"
+            },
+            {
+                "variable": "groupNameRotation",
+                "track": "groupname:rotation"
+            },
+            {
+                "variable": "demoNamePosition",
+                "track": "demoname:position"
+            },
+            {
+                "variable": "demoNameRotation",
+                "track": "demoname:rotation"
             }
         ],
         "textures": [
             {
                 "name": "bogdan"
+            },
+            {
+                "name": "demoName"
+            },
+            {
+                "name": "groupLogo"
             }
         ]
     },
@@ -84,6 +106,16 @@
             "type": "staticTexture",
             "name": "bogdan",
             "file": "assets\\textures\\bogdan.png"
+        },
+        {
+            "type": "staticTexture",
+            "name": "demoName",
+            "file": "assets\\textures\\Logo_MadGodsGift.png"
+        },
+        {
+            "type": "staticTexture",
+            "name": "groupLogo",
+            "file": "assets\\textures\\bogdan_final.png"
         }
     ],
     "tracks": [
@@ -126,6 +158,22 @@
         {
             "type": "float1",
             "track": "fog:intensity"
+        },
+        {
+            "type": "float3",
+            "track": "groupname:position"
+        },
+        {
+            "type": "float3",
+            "track": "groupname:rotation"
+        },
+        {
+            "type": "float3",
+            "track": "demoname:position"
+        },
+        {
+            "type": "float3",
+            "track": "demoname:rotation"
         }
     ]
 }

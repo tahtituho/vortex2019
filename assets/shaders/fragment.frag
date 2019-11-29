@@ -19,7 +19,15 @@ uniform vec3 lightPosition;
 uniform vec3 fogColor;
 uniform float fogIntensity;
 
+uniform vec3 groupNamePosition;
+uniform vec3 groupNameRotation;
+
+uniform vec3 demoNamePosition;
+uniform vec3 demoNameRotation;
+
 uniform sampler2D bogdan;
+uniform sampler2D demoName;
+uniform sampler2D groupLogo;
 
 in float[12] sines;
 in float[12] coses;
@@ -643,90 +651,64 @@ entity scene(vec3 path, vec2 uv)
 {   
     int a = int(act);
     if(a == 1) {
-        vec3 r = rot(path, vec3(time));
-        vec3Tuple rr = repeat(r, vec3(10.0, 10.0, 10.0));
-        //r = rr.first;
-        //r = path;
-        material m1 = material(
-            vec3(1.0, 0.0, 0.0),
+        vec3 groupPath = translate(rot(path, groupNameRotation), groupNamePosition);
+        material groupMat = material(
+            vec3(1.0, 1.0, 1.0),
             1.0,
 
-            vec3(1.0, 0.0, 0.0),
-            2.2,
+            vec3(1.0, 1.0, 1.0),
+            1.0,
 
             vec3(1.0, 1.0, 1.0),
-            50.0,
-            100.0,
+            0.0,
+            0.0,
 
             0.2,
-            true,
+            false,
             1.5,
             5.5,
             textureOptions(
-                0,
-                vec3(1.5, 1.5, 1.5),
-                vec3(2.0, 2.0, 2.0),
+                10,
+                vec3(0.5, 0.5, 0.5),
+                vec3(2.5, 2.5 * 1.8333, 1.0),
                 false
             )
         );
 
-        entity e1 = mBox(r, vec3(1.0), 0.1, m1);
+        entity e1 = mBox(rotZ(groupPath, 1.5708), vec3(1080.0, 1920.0, 0.1), 0.0, groupMat);
         e1.needNormals = true;  
-        e1.dist *= 0.5;
-        material m2 = material(
-            vec3(0.0, 1.0, 0.0),
+
+        vec3 demoPath = rot(translate(path, demoNamePosition), demoNameRotation);
+        material demoMat = material(
+            vec3(1.0, 1.0, 1.0),
             1.0,
 
-            vec3(0.0, 1.0, 0.0),
+            vec3(1.0, 1.0, 1.0),
             2.2,
 
             vec3(1.0, 1.0, 1.0),
-            50.0,
-            100.0,
+            0.0,
+            0.0,
 
             0.2,
-            true,
+            false,
             1.5,
             5.5,
             textureOptions(
-                0,
-                vec3(1.5, 1.5, 1.5),
-                vec3(2.0, 2.0, 2.0),
+                11,
+                vec3(0.5, 0.5, 0.5),
+                vec3(0.5, 0.5 * 1.8333, 1.0),
                 false
             )
         );
 
-        entity e2 = mBox(rotZ(translate(r, vec3(0.5, 1.0, 1.0)), -0.7), vec3(1.0), 0.1, m2);
+        entity e2 = mBox(rotZ(demoPath, 1.5708), vec3(1.0 / 5.0, 1.83 / 5.0, 0.1), 0.0, demoMat);
         e2.needNormals = true;
-
-        material m3 = material(
-            vec3(0.0, 0.0, 1.0),
-            1.0,
-
-            vec3(0.0, 0.0, 1.0),
-            2.2,
-
-            vec3(1.0, 1.0, 1.0),
-            50.0,
-            100.0,
-
-            0.2,
-            true,
-            2.5,
-            5.5,
-            textureOptions(
-                0,
-                vec3(1.5, 1.5, 1.5),
-                vec3(2.0, 2.0, 2.0),
-                false
-            )
-        );
-        
-        entity e3 = mBox(rotZ(translate(r, vec3(-0.5, -1.0, -1.0)), 0.7), vec3(1.0), 0.1, m3);
-        e3.needNormals = true;  
-        entity comb = opSmoothUnion(opSmoothUnion(e1, e2, 0.5, 0.0), e3, 0.5, 0.0);
+       
+        entity comb = opSmoothUnion(e1, e2, 0.0, 0.0);
         //comb.dist += displacement(r, vec3(3.0));
         comb.needNormals = true;
+        //return e2;
         return comb;
     }
  
@@ -787,7 +769,7 @@ float shadows(vec3 ro, vec3 rd, float mint, float maxt, float k, vec2 uv) {
     for(float t = mint; t < maxt;)
     {
         float h = scene(ro + (rd * t), uv).dist;
-        if(h < 0.01)
+        if(h < rayThreshold)
             return 0.0;
         float y = h * h / (2.0 * ph);
         float d = sqrt(h * h - y * y);
@@ -860,9 +842,14 @@ vec4 background(vec2 uv) {
 vec3 generateTexture(int index, vec3 point, vec3 offset, vec3 scale) {
     vec3 r = vec3(1.0);
     switch(index) {
-        case 1: {
+        case 10: {
             vec3 rp = vec3((point.x / scale.x) + offset.x, (point.y / scale.y) + offset.y, (point.z / scale.z) + offset.z);
-            r = textureCube(bogdan, rp, vec3(0.0, 0.0, 0.1)).xyz;
+            r = textureCube(groupLogo, rp, vec3(0.0, 0.0, 0.1)).xyz;
+            break;
+        }
+        case 11: {
+            vec3 rp = vec3((point.x / scale.x) + offset.x, (point.y / scale.y) + offset.y, (point.z / scale.z) + offset.z);
+            r = textureCube(demoName, rp, vec3(0.0, 0.0, 0.1)).xyz;
             break;
         }
        
