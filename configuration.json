@@ -87,6 +87,18 @@
             {
                 "variable": "demoNameRotation",
                 "track": "demoname:rotation"
+            },
+            {
+                "variable": "makersPosition",
+                "track": "makers:position"
+            },
+            {
+                "variable": "makersOffset",
+                "track": "makers:offset"
+            },
+            {
+                "variable": "makersTexture",
+                "track": "makers:texture"
             }
         ],
         "textures": [
@@ -174,6 +186,18 @@
         {
             "type": "float3",
             "track": "demoname:rotation"
+        },
+        {
+            "type": "float3",
+            "track": "makers:position"
+        },
+        {
+            "type": "float3",
+            "track": "makers:rotation"
+        },
+        {
+            "type": "float",
+            "track": "makers:texture"
         }
     ]
 }
