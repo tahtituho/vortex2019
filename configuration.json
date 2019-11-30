@@ -110,7 +110,35 @@
             },
             {
                 "name": "groupLogo"
+            },
+            {
+                "name": "tunnelTex"
+            },
+            {
+                "name": "tunnelTexNm"
+            },
+            {
+                "name": "bogdanLogo"
+            },
+            {
+                "name": "codeColho"
+            },
+            {
+                "name": "codeHelgrima"
+            },
+            {
+                "name": "musicMajaniemi"
+            },
+            {
+                "name": "gfxWartti"
+            },
+            {
+                "name": "demoLogo1"
+            },
+            {
+                "name": "demoLogo2"
             }
+
         ]
     },
 	 "assets": [
@@ -128,6 +156,51 @@
             "type": "staticTexture",
             "name": "groupLogo",
             "file": "assets\\textures\\bogdan_final.png"
+        },
+        {
+            "type": "staticTexture",
+            "name": "tunnelTex",
+            "file": "assets\\textures\\tunnel.png"
+        },
+        {
+            "type": "staticTexture",
+            "name": "tunnelTexNm",
+            "file": "assets\\textures\\tunnelnm.png"
+        },
+        {
+            "type": "staticTexture",
+            "name": "bogdanLogo",
+            "file": "assets\\textures\\bogdan_final.png"
+        },
+        {
+            "type": "staticTexture",
+            "name": "codeColho",
+            "file": "assets\\textures\\Code_Colho.png"
+        },
+        {
+            "type": "staticTexture",
+            "name": "codeHelgrima",
+            "file": "assets\\textures\\Code_Helgrima.png"
+        },
+        {
+            "type": "staticTexture",
+            "name": "musicMajaniemi",
+            "file": "assets\\textures\\Music_Majaniemi.png"
+        },
+        {
+            "type": "staticTexture",
+            "name": "gfxWartti",
+            "file": "assets\\textures\\Gfx_Wartti.png"
+        },
+        {
+            "type": "staticTexture",
+            "name": "demoLogo1",
+            "file": "assets\\textures\\Logo_BlindIdiotGod.png"
+        },
+        {
+            "type": "staticTexture",
+            "name": "demoLogo2",
+            "file": "assets\\textures\\Logo_MadGodsGift.png"
         }
     ],
     "tracks": [
