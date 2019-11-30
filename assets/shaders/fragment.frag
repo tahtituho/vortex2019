@@ -723,7 +723,7 @@ entity scene(vec3 path, vec2 uv)
             0.4,
             1.0, 
             true,
-            0.5,
+            2.0,
             5.5,
             textureOptions(
                 0,
@@ -733,13 +733,13 @@ entity scene(vec3 path, vec2 uv)
             )
         );
         float s = 1.0;
-        vec3Tuple p1 = repeat(path, vec3(s * 3.5, 0.0, s * 3.5));
+        vec3Tuple p1 = repeat(path, vec3(s * 3.8, 0.0, s * 3.8));
 
         entity guard = mBoxCheap(path, vec3(s), testmat);
         guard.dist = -guard.dist;
         guard.dist = abs(guard.dist) + s* 0.1;
         vec2 randomizer = vec2(rand(p1.second.xz), 100);
-        vec3 rot = rotY(p1.first, rand(p1.second.xz));
+        vec3 rot = rotY(p1.first, sin(time * 2.5)* rand(p1.second.xz) * 1.5);
         entity dickles;
         if (rand(p1.second.xz) < 0.5) {
             dickles = mCapsule(rotY(rotX(rot, rand(p1.second.xz) * 0.3  * (sin(time * rand(p1.second.xz) * 26.5)) * smoothstep(0, 4, p1.first.y)), 2 * rand(p1.second.xz)), vec3(1.0, 1.0, 1.0), vec3(1.0, 4.0, 1.0), vec3(1, 0, 0), 1.0, testmat);

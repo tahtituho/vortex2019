@@ -13,18 +13,24 @@ color="ffb28050">
 		<key row="0" value="1.000000" interpolation="0" />
 		<key row="608" value="0.000000" interpolation="1" />
 		<key row="640" value="1.000000" interpolation="0" />
+		<key row="824" value="1.000000" interpolation="1" />
+		<key row="832" value="0.000000" interpolation="0" />
 	</track>
 	<track name="common:fade.y" folded="0" muteKeyCount="0"
 color="ffa9b250">
 		<key row="0" value="1.000000" interpolation="0" />
 		<key row="608" value="0.000000" interpolation="1" />
 		<key row="640" value="1.000000" interpolation="0" />
+		<key row="824" value="1.000000" interpolation="1" />
+		<key row="832" value="0.000000" interpolation="0" />
 	</track>
 	<track name="common:fade.z" folded="0" muteKeyCount="0"
 color="ff60b250">
 		<key row="0" value="1.000000" interpolation="0" />
 		<key row="608" value="0.000000" interpolation="1" />
 		<key row="640" value="1.000000" interpolation="0" />
+		<key row="824" value="1.000000" interpolation="1" />
+		<key row="832" value="0.000000" interpolation="0" />
 	</track>
 	<track name="camera:position.x" folded="0" muteKeyCount="0"
 color="ff4fb292">
@@ -60,7 +66,11 @@ color="ffb25091">
 		<key row="0" value="40.000000" interpolation="0" />
 		<key row="545" value="0.000000" interpolation="0" />
 		<key row="608" value="400.000000" interpolation="0" />
-		<key row="768" value="400.000000" interpolation="1" />
+		<key row="704" value="400.000000" interpolation="1" />
+		<key row="712" value="200.000000" interpolation="0" />
+		<key row="728" value="200.000000" interpolation="1" />
+		<key row="736" value="170.000000" interpolation="1" />
+		<key row="768" value="170.000000" interpolation="1" />
 		<key row="800" value="0.000000" interpolation="0" />
 	</track>
 	<track name="camera:lookat.y" folded="0" muteKeyCount="0"
