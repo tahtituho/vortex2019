@@ -131,12 +131,6 @@
             },
             {
                 "name": "gfxWartti"
-            },
-            {
-                "name": "demoLogo1"
-            },
-            {
-                "name": "demoLogo2"
             }
 
         ]
@@ -191,16 +185,6 @@
             "type": "staticTexture",
             "name": "gfxWartti",
             "file": "assets\\textures\\Gfx_Wartti.png"
-        },
-        {
-            "type": "staticTexture",
-            "name": "demoLogo1",
-            "file": "assets\\textures\\Logo_BlindIdiotGod.png"
-        },
-        {
-            "type": "staticTexture",
-            "name": "demoLogo2",
-            "file": "assets\\textures\\Logo_MadGodsGift.png"
         }
     ],
     "tracks": [
@@ -266,10 +250,10 @@
         },
         {
             "type": "float3",
-            "track": "makers:rotation"
+            "track": "makers:offset"
         },
         {
-            "type": "float",
+            "type": "float1",
             "track": "makers:texture"
         }
     ]

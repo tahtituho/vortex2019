@@ -39,8 +39,6 @@ uniform sampler2D codeColho;
 uniform sampler2D codeHelgrima;
 uniform sampler2D musicMajaniemi;
 uniform sampler2D gfxWartti;
-uniform sampler2D demoLogo1;
-uniform sampler2D demoLogo2;
 
 in float[12] sines;
 in float[12] coses;
@@ -1090,16 +1088,6 @@ vec3 generateTexture(int index, vec3 point, vec3 offset, vec3 scale) {
         case 44: {
             vec3 rp = vec3((point.x / scale.x) + offset.x, (point.y / scale.y) + offset.y, (point.z / scale.z) + offset.z);
             r = textureCube(musicMajaniemi, rp, vec3(0.0, 0.0, 0.1)).xyz;
-            break;
-        }
-        case 45: {
-            vec3 rp = vec3((point.x / scale.x) + offset.x, (point.y / scale.y) + offset.y, (point.z / scale.z) + offset.z);
-            r = textureCube(demoLogo1, rp, vec3(0.0, 0.0, 0.1)).xyz;
-            break;
-        }
-        case 46: {
-            vec3 rp = vec3((point.x / scale.x) + offset.x, (point.y / scale.y) + offset.y, (point.z / scale.z) + offset.z);
-            r = textureCube(demoLogo2, rp, vec3(0.0, 0.0, 0.1)).xyz;
             break;
         }
        
