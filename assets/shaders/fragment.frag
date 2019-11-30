@@ -647,6 +647,45 @@ entity mCappedCylinder(vec3 path, vec2 size, float r, material material) {
     return m;
 }
 
+entity mMandleMaze(vec3 path, float time, float scale) {
+    material m1 = material(
+        vec3(0.3, 0.3, 0.3),
+        5.0,
+
+        vec3(1.0, 1.0, 1.0),
+        5.0,
+
+        vec3(0.0, 0.0, 1.0),
+        500.0,
+        5.0,
+
+        0.9,
+        true,
+        0.5,
+        5.5,
+        textureOptions(
+            0,
+            vec3(1.5, 1.5, 1.5),
+            vec3(2.0, 2.0, 2.0),
+            false
+        )
+    );
+
+    vec3Tuple rPath = repeat(path, vec3(4.0));
+    vec3 sPath = rPath.first / scale;
+    float offset = rPath.second.z / 10.0;// + (sin(time) / 10.0);
+    entity maze = mMandleBox(sPath, m1, 2.0, 2.2, 0.15, 2.6  + offset, 1.6, 15, 100.0, 0.18 + offset, 1.0);
+    maze.dist *= scale;
+    maze.needNormals = true;
+    maze.point = sPath;
+
+    entity mazeCut = mSphere(sPath, 13.5, m1);
+    mazeCut.dist *= scale;
+    mazeCut.needNormals = true;
+    mazeCut.point = sPath;
+    return opSmoothSubtraction(mazeCut, maze, 0.0, 0.0);
+}
+
 entity scene(vec3 path, vec2 uv)
 {   
     int a = int(act);
@@ -711,6 +750,10 @@ entity scene(vec3 path, vec2 uv)
         //return e2;
         return comb;
     }
+    else if(a == 2) {
+        entity mandel = mMandleMaze(path, time, 0.2);
+        return mandel;
+    }
  
 } 
 
@@ -726,7 +769,7 @@ hit raymarch(vec3 rayOrigin, vec3 rayDirection, vec2 uv) {
         h.last = min(h.entity.dist, h.last);
         if(abs(h.entity.dist) < rayThreshold) {
             if(h.entity.needNormals == true) {
-                vec2 eps = vec2(0.001, 0.0);
+                vec2 eps = vec2(0.01, 0.0);
                 h.normal = normalize(vec3(
                     scene(h.point + eps.xyy, uv).dist - h.entity.dist,
                     scene(h.point + eps.yxy, uv).dist - h.entity.dist,
@@ -735,7 +778,7 @@ hit raymarch(vec3 rayOrigin, vec3 rayDirection, vec2 uv) {
             }
             break;
         }
-        h.dist += h.entity.dist;
+        h.dist += (h.entity.dist);
 
     }
     
@@ -747,6 +790,9 @@ vec3 ambient(vec3 color, float strength) {
 } 
 
 vec3 diffuse(vec3 normal, vec3 hit, vec3 pos, vec3 color, float strength) {
+    if(strength <= 0.0) {
+        return vec3(0.0);
+    }
     vec3 lightDir = normalize(pos - hit);
     float diff = max(dot(normal, lightDir), 0.0);
     vec3 diffuse = diff * color * strength;
@@ -754,6 +800,9 @@ vec3 diffuse(vec3 normal, vec3 hit, vec3 pos, vec3 color, float strength) {
 }
 
 vec3 specular(vec3 normal, vec3 eye, vec3 hit, vec3 pos, vec3 color, float strength, float shininess) {
+    if(strength <= 0.0) {
+        return vec3(0.0);
+    }
     vec3 lightDir = normalize(pos - hit);
     vec3 viewDir = normalize(eye - hit);
     vec3 halfwayDir = normalize(lightDir + viewDir);
@@ -831,9 +880,9 @@ float plot(float pct, float thickness, vec2 position) {
 vec4 background(vec2 uv) {
     int a = int(act);
     vec4 r = vec4(0.0);
-    if(a == 1) {
-        r.xyz = vec3(0.0);
-        r.w = 1.0;
+    if(a == 4) {
+        r.xyz = vec3(1.0);
+        r.w = 0.0;
     }
 
     return r;
@@ -919,6 +968,7 @@ vec4 postProcess(vec3 original, vec2 uv) {
 
 vec3 drawMarching(vec2 uv) {
     vec3 camPos = vec3(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+    vec3 cameraLookAt = cameraLookAt;
     vec3 forward = normalize(cameraLookAt - camPos); 
     vec3 right = normalize(vec3(forward.z, 0.0, -forward.x));
     vec3 up = normalize(cross(forward, right)); 
@@ -928,7 +978,7 @@ vec3 drawMarching(vec2 uv) {
     vec3 ro = vec3(camPos);
  
     hit tt = raymarch(ro, rd, uv);
-    return processColor(tt, rd, ro, uv, lightPosition); 
+    return processColor(tt, rd, ro, uv, camPos); 
 }
 
 void main() {
