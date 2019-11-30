@@ -89,6 +89,10 @@
                 "track": "demoname:rotation"
             },
             {
+                "variable": "demoNameRotation",
+                "track": "demoname:offset"
+            },
+            {
                 "variable": "makersPosition",
                 "track": "makers:position"
             },
@@ -99,6 +103,26 @@
             {
                 "variable": "makersTexture",
                 "track": "makers:texture"
+            },
+            {
+                "variable": "applePos",
+                "track": "scene10:applepos"
+            },
+            {
+                "variable": "randPopper",
+                "track": "scene10:randpopper"
+            },
+            {
+                "variable": "terrainType",
+                "track": "scene10:terrainType"
+            },
+            {
+                "variable": "ripplePos",
+                "track": "scene10:ripplePos"
+            },
+            {
+                "variable": "snakeLength",
+                "track": "scene10:snakeLength"
             }
         ],
         "textures": [
@@ -116,9 +140,6 @@
             },
             {
                 "name": "tunnelTexNm"
-            },
-            {
-                "name": "bogdanLogo"
             },
             {
                 "name": "codeColho"
@@ -178,11 +199,6 @@
         },
         {
             "type": "staticTexture",
-            "name": "bogdanLogo",
-            "file": "assets\\textures\\bogdan_final.png"
-        },
-        {
-            "type": "staticTexture",
             "name": "codeColho",
             "file": "assets\\textures\\Code_Colho.png"
         },
@@ -225,7 +241,7 @@
             "type": "staticTexture",
             "name": "wideLoadGreets",
             "file": "assets\\textures\\Tahtituho_Greets_WideLoad.png"
-	}
+	    }
     ],
     "tracks": [
         {
@@ -286,6 +302,10 @@
         },
         {
             "type": "float3",
+            "track": "demoname:offset"
+        },
+        {
+            "type": "float3",
             "track": "makers:position"
         },
         {
@@ -295,6 +315,30 @@
         {
             "type": "float1",
             "track": "makers:texture"
+        },
+        {
+            "type": "float1",
+            "track": "snake10:snakepos"
+        },
+        {
+            "type": "float1",
+            "track": "scene10:applepos"
+        },
+        {
+            "type": "float1",
+            "track": "scene10:randpopper"
+        },
+        {
+            "type": "float1",
+            "track": "scene10:terrainType"
+        },
+        {
+            "type": "float1",
+            "track": "scene10:ripplePos"
+        },
+        {
+            "type": "float1",
+            "track": "scene10:snakeLength"
         }
     ]
 }

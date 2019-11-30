@@ -24,11 +24,27 @@ uniform vec3 groupNameRotation;
 
 uniform vec3 demoNamePosition;
 uniform vec3 demoNameRotation;
- 
+
+uniform sampler2D demoName;
+uniform sampler2D groupLogo;
+
 uniform vec3 makersPosition;
 uniform vec3 makersOffset;
 uniform float makersTexture;
+uniform vec3 demonamePosition;
+uniform vec3 demonameOffset;
 
+// Scene 10
+uniform float terrainType;
+uniform float ripplePos;
+uniform float snakeLength;
+uniform float snakePos;
+uniform float applePos;
+uniform float randPopper;
+
+uniform sampler2D tunnelTex;
+uniform sampler2D tunnelTexNm;
+uniform sampler2D bogdanLogo;
 uniform sampler2D bogdan;
 uniform sampler2D cassetteLabel;
 uniform sampler2D adaptGreets;
@@ -543,6 +559,14 @@ vec3 scale(vec3 p, float s) {
     return p1;
 } 
 
+float rand(float n){return fract(sin(n) * 43758.5453123);}
+
+float noise(float p){
+	float fl = floor(p);
+    float fc = fract(p);
+	return mix(rand(fl), rand(fl + 1.0), fc);
+}
+
 vec3Tuple repeat(vec3 p, vec3 size) {
     vec3 c = floor((p + size * 0.5 ) / size);
     vec3 path1 = mod(p + size * 0.5, size) - size * 0.5;
@@ -630,11 +654,36 @@ vec3 boxFold(vec3 z, vec3 r) {
     return z1;
 }
 
-entity mPlane(vec3 path, vec3 pos, vec4 n, float scale, material material)
+vec2 spiral(float n) {
+    float k=ceil((sqrt(n)-1)/2);
+    float t=2*k+1;
+    float m=pow(t, 2);
+    t=t-1;
+    if (n>=m-t) {
+        return vec2(k-(m-n),-k);
+    }
+    else {
+        m = m-t;
+    }
+    if (n>=m-t) {
+        return vec2(-k,-k+(m-n));
+    }   
+    else {
+        m = m-t;
+    }
+    if (n>=m-t) {
+        return vec2(-k+(m-n),k);
+    } 
+    else {
+        return vec2(k,k-(m-n-t));
+    }
+}
+
+entity mPlane(vec3 p, vec3 pos, vec4 n, material material)
 {
     entity m;
-    vec3 p1 = path / scale;
-    m.dist = sdPlane(p1, pos, n) * scale;
+    vec3 p1 = p;
+    m.dist = sdPlane(p, pos, n);
     m.point = p1;
     m.material = material;
     return m;
@@ -658,20 +707,23 @@ entity mBox(vec3 path, vec3 size, float r, float scale, material material) {
     return m;
 }
 
-entity mTorus(vec3 path, vec2 dim, float scale, material material) {
+entity mCapsule(vec3 p, vec3 pos, vec3 a, vec3 b, float r, material material) {
     entity m;
-    vec3 p1 = path / scale;
-    m.dist = sdTorus(p1, vec3(0.0), dim) * scale;
+    vec3 p1 = p;
+    m.dist = sdCapsule(p, pos, a, b, r);
     m.point = p1;
     m.material = material;
     return m;
 }
 
-entity mCylinder(vec3 path, vec3 size, float r, float scale, material material) {
+float vmax(vec3 v) {
+	return max(max(v.x, v.y), v.z);
+}
+
+entity mBoxCheap(vec3 p, vec3 b, material material) {
     entity m;
-    vec3 p1 = path / scale;
-    m.dist = sdCylinder(p1, size, r) * scale;
-    m.point = p1;
+    m.dist = vmax(abs(p) - b);
+    m.point = p;
     m.material = material;
     return m;
 }
@@ -712,14 +764,75 @@ entity mCylinder(vec3 path, vec3 size, float r, material material) {
     return m;
 }
 
-entity mOctahedron(vec3 path, float height, float scale, material material) {
+
+entity mTerrain(vec3 path, vec3 par, material material) {
     entity m;
-    vec3 p1 = path / scale;
-    m.dist = sdOctahedron(p1, height) * scale;
-    m.point = p1;
-    m.material = material;
+    float s = 5.0;
+    vec3Tuple p1 = repeat(path, vec3(s * 2.5, 0.0, s * 2.5));
+
+    // Ripple effect
+    if (terrainType == 1) {
+        float timer = floor(ripplePos);
+        float midtotimer = floor(length(p1.second.xz));
+        float ramp = midtotimer + 1;
+        float ramp2 = midtotimer - 1;
+        if (midtotimer == timer && timer > 0) {
+            material.ambient = vec3(1.0, 1.0, 1.0);
+            m = mBox(translate(p1.first, vec3(0.0, 10, 0.0)), vec3(s, s, s), 0.05, 1.0, material);
+        }
+        else if ((midtotimer == (timer - 5) || midtotimer == (timer + 5)) && timer > 0) {
+            material.ambient = vec3(1.0, 0.0, 0.0);
+            m = mBox(translate(p1.first, vec3(0.0, 5, 0.0)), vec3(s, s, s), 0.05, 1.0, material);
+        }
+        else if (ramp == timer || ramp2 == timer && timer > 0) {
+            material.ambient = vec3(1.0, 0.0, 0.0);
+            m = mBox(translate(p1.first, vec3(0.0, 2.0, 0.0)), vec3(s, s, s), 0.05, 1.0, material);
+        }
+        else {
+            material.ambient = vec3(0.2, 0.2, 0.2);
+            m = mBox(p1.first, vec3(s, s, s), 0.05, 1.0, material);
+        }
+    }
+    // Random boxes
+    else if (terrainType == 2) {
+        vec2 randomizer = vec2(rand(p1.second.xz), randPopper);
+        if ( rand(randomizer) < 0.1) {
+            material.ambient = vec3(1.0, 0.0, 0.0);
+            float coeff = 1;
+            m = mBox(translate(p1.first, sin(time * randPopper)*vec3(0.0, rand(p1.second.xz) * 5, 0.0)), vec3(s, s, s), 0.05, 1.0, material);
+        }
+        else {
+            material.ambient = vec3(0.2, 0.2, 0.2);
+            m = mBox(p1.first, vec3(s, s, s), 0.05, 1.0, material);
+        }
+    }
+    // Spiral worm
+    else if (terrainType == 3) {
+        material.ambient = vec3(0.2, 0.2, 0.2);
+        m = mBox(p1.first, vec3(s, s, s), 0.05, 1.0, material);
+        vec2 applePosV = vec2(0.0, 0.0);
+        if (applePos > 0) {
+            applePosV = spiral(floor(applePos));
+        }
+        if (fade.x == 2) {
+            s = 1;
+        }
+        for (int y = 0; y < snakeLength; y++) {
+            vec2 spiralPos = spiral(floor(snakePos) - y);
+            if (spiralPos == p1.second.xz) {
+                material.ambient = vec3(1.0, 0.0, 0.0);
+                m = mBox(translate(p1.first, vec3(0.0, 5, 0.0)), vec3(s, s, s), 0.05, 1.0, material);
+            }
+            else if (applePosV == p1.second.xz && applePos > 0) {
+                material.ambient = vec3(0.0, 1.0, 0.0);
+                m = mBox(translate(p1.first, vec3(0.0, 5, 0.0)), vec3(s, s, s), 0.05, 1.0, material);
+            }
+        }
+    }
+    m.point = p1.first;
     return m;
 }
+
 
 entity tunnelSegment(vec3 path, float r1, float r2, float h, float notch, int numberOfNotches, float scale) {
     material m1 = material(
@@ -772,77 +885,6 @@ entity mCappedCylinder(vec3 path, vec2 size, float r, material material) {
     return m;
 }
 
-entity mMandleMaze(vec3 path, float time, float scale) {
-    material m1 = material(
-        vec3(0.3, 0.3, 0.3),
-        5.0,
-
-        vec3(1.0, 1.0, 1.0),
-        5.0,
-
-        vec3(0.0, 0.0, 1.0),
-        500.0,
-        5.0,
-
-        0.9,
-        true,
-        0.5,
-        5.5,
-        textureOptions(
-            0,
-            vec3(1.5, 1.5, 1.5),
-            vec3(2.0, 2.0, 2.0),
-            false
-        )
-    );
-
-    vec3Tuple rPath = repeat(path, vec3(4.0));
-    vec3 sPath = rPath.first / scale;
-    float offset = rPath.second.z / 10.0;// + (sin(time) / 10.0);
-    entity maze = mMandleBox(sPath, m1, 2.0, 2.2, 0.15, 2.6  + offset, 1.6, 15, 100.0, 0.18 + offset, 1.0);
-    maze.dist *= scale;
-    maze.needNormals = true;
-    maze.point = sPath;
-
-    entity mazeCut = mSphere(sPath, 13.5, 1.0, m1);
-    mazeCut.dist *= scale;
-    mazeCut.needNormals = true;
-    mazeCut.point = sPath;
-    return opSmoothSubtraction(mazeCut, maze, 0.0, 0.0);
-}
-
-entity banner(vec3 path, float scale, int texture, vec3 offset) {
-    material m1 = material(
-        vec3(0.5, 0.5, 0.5),
-        1.0,
-
-        vec3(1.0, 1.0, 1.0),
-        1.2,
-
-        vec3(1.0, 1.0, 1.0),
-        1.0,
-        20.0,
-
-        0.8,
-        false,
-        1.5,
-        2.0,
-        textureOptions(
-            texture,
-            offset,
-            vec3(1.0, 1.0, 1.0),
-            false
-        )
-    );
-    entity p;
-    vec3 size = vec3(1.0, 1.0, 1.0);
-    float p1 = sdBox(path / scale, vec3(0.0), size, 0.0);
-
-    p.point = path;
-    p.dist = p1 * scale;
-    p.material = m1;
-    return p;
-}
 
 entity mCasette(vec3 path, float scale, float time) {
     material bodyMat = material(
@@ -1096,6 +1138,77 @@ entity scene(vec3 path, vec2 uv)
         comb.needNormals = true;
         //return e2;
         return comb;
+    }
+    else if (a == 10) {
+        material planemat = material(
+            vec3(0.0, 0.0, 0.0),
+            1.0,
+            vec3(0.5, 0.5, 0.5),
+            1.3,
+            vec3(0.0, 0.0, 0.5),
+            10.0,
+            0.4,
+            1.0, 
+            true,
+            2.5,
+            5.5,
+            textureOptions(
+                0,
+                vec3(0.0),
+                vec3(0.0),
+                false
+            )
+        );
+
+        entity terrain = mTerrain(path, vec3(100.0, 20.0, 1.0), planemat);
+        float saizu = 1;
+        entity guard = mBoxCheap(path, vec3(saizu), planemat);
+        guard.dist = -guard.dist;
+        guard.dist = abs(guard.dist) + saizu * 0.1;
+
+        return opUnion(terrain, guard);
+    }
+    else if (a == 11) {
+        material testmat = material(
+            vec3(0.9, 0.1, 0.1),
+            1.0,
+            vec3(0.5, 0.5, 0.5),
+            1.3,
+            vec3(0.0, 0.0, 0.5),
+            10.0,
+            0.4,
+            1.0, 
+            true,
+            2.0,
+            5.5,
+            textureOptions(
+                0,
+                vec3(0.0),
+                vec3(0.0),
+                false
+            )
+        );
+        float s = 1.0;
+        vec3Tuple p1 = repeat(path, vec3(s * 3.8, 0.0, s * 3.8));
+
+        entity guard = mBoxCheap(path, vec3(s), testmat);
+        guard.dist = -guard.dist;
+        guard.dist = abs(guard.dist) + s* 0.1;
+        vec2 randomizer = vec2(rand(p1.second.xz), 100);
+        vec3 rot = rotY(p1.first, sin(time * 2.5)* rand(p1.second.xz) * 1.5);
+        entity dickles;
+        if (rand(p1.second.xz) < 0.5) {
+            dickles = mCapsule(rotY(rotX(rot, rand(p1.second.xz) * 0.3  * (sin(time * rand(p1.second.xz) * 26.5)) * smoothstep(0, 4, p1.first.y)), 2 * rand(p1.second.xz)), vec3(1.0, 1.0, 1.0), vec3(1.0, 4.0, 1.0), vec3(1, 0, 0), 1.0, testmat);
+        
+        }
+        else {
+            dickles = mCapsule(rotY(rotZ(rot, rand(p1.second.xz) * 0.3  * (sin(time * rand(p1.second.xz) * 26.5)) * smoothstep(0, 4, p1.first.y)), 2 * rand(p1.second.xz)), vec3(1.0, 1.0, 1.0), vec3(1.0, 4.0, 1.0), vec3(1, 0, 0), 1.0, testmat);
+        
+        }
+         
+        entity floor = mPlane(path, vec3(0, -0.2, 0), vec4(0, 1, 0, 1), testmat);
+
+        return opSmoothUnion(floor, dickles, 2, 0.01);
     }
     else if(a == 2) {
         entity mandel = mMandleMaze(path, time, 0.2);
