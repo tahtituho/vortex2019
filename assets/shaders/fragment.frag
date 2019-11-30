@@ -21,6 +21,10 @@ uniform float fogIntensity;
 
 uniform sampler2D bogdan;
 uniform sampler2D cassetteLabel;
+uniform sampler2D adaptGreets;
+uniform sampler2D convergeGreets;
+uniform sampler2D exoticMenGreets;
+uniform sampler2D wideLoadGreets;
 
 in float[12] sines;
 in float[12] coses;
@@ -649,8 +653,8 @@ entity mCasette(vec3 path, float scale, float time) {
         0.2,
 
         vec3(0.0, 1.0, 0.2),
-        1.0,
-        10.0,
+        0.0,
+        0.0,
 
         0.2,
         false,
@@ -671,8 +675,8 @@ entity mCasette(vec3 path, float scale, float time) {
         2.2,
 
         vec3(1.0, 1.0, 1.0),
-        10.0,
-        100.0,
+        0.0,
+        0.0,
 
         0.2,
         false,
@@ -686,11 +690,11 @@ entity mCasette(vec3 path, float scale, float time) {
         )
     );
     material tapeMat = material(
-        vec3(0.00, 0.00, 0.00),
+        vec3(1.0, 1.0, 1.0),
         1.0,
 
-        vec3(0.00, 0.00, 0.00),
-        2.2,
+        vec3(1.0, 1.0, 1.0),
+        0.0,
 
         vec3(1.0, 1.0, 1.0),
         0.0,
@@ -702,46 +706,46 @@ entity mCasette(vec3 path, float scale, float time) {
         5.5,
         textureOptions(
             52,
-            vec3(0.65, 0.45, 0.0),
-            vec3(88.0, 150.0, 5.0),
+            vec3(0.5, 0.5, 0.5),
+            vec3(0.2, 0.2, 0.2),
             false
         )
     );
     vec3 sPath = path / scale;
     float gearDir = sign(sPath.x);
     sPath.x = -abs(sPath.x);
-    float bodyBase = sdBox(translate(sPath, vec3(-50.1, 0.0, 0.0)), vec3(0.0, 0.0, 0.0), vec3(50.1, 63.8, 8.6), 1.8) * scale;
-    float bodySideOverHang = sdBox(translate(sPath, vec3(-100.2 + 2.5, -41.0, 0.0)), vec3(0.0, 0.0, 0.0), vec3(5.0, 17.7, 2.7), 1.8) * scale;
-    float bodyLowerOverHang = sdBox(translate(sPath, vec3(-34.5, -63.8 + 15.5, 0.0)), vec3(0.0), vec3(34.5, 15.5, 12.0), 1.8) * scale;
-    float bodyLowerOverHangDel = sdBox(rotZ(translate(sPath, vec3(-79.0, -63.8 + 15.5, 0.0)), 0.17), vec3(0.0), vec3(15.0, 20.0, 20.0), 0.0) * scale;
+    float bodyBase = sdBox(translate(sPath, vec3(-50.1, 0.0, 0.0)), vec3(0.0, 0.0, 0.0), vec3(50.1, 63.8, 8.6), 1.8);
+    float bodySideOverHang = sdBox(translate(sPath, vec3(-100.2 + 2.5, -41.0, 0.0)), vec3(0.0, 0.0, 0.0), vec3(5.0, 17.7, 2.7), 1.8);
+    float bodyLowerOverHang = sdBox(translate(sPath, vec3(-34.5, -63.8 + 15.5, 0.0)), vec3(0.0), vec3(34.5, 15.5, 12.0), 1.8);
+    float bodyLowerOverHangDel = sdBox(rotZ(translate(sPath, vec3(-79.0, -63.8 + 15.5, 0.0)), 0.17), vec3(0.0), vec3(15.0, 20.0, 20.0), 0.0);
     float bodyLowerOverHangUnion = opSmoothSubtraction(bodyLowerOverHangDel, bodyLowerOverHang, 0.0);
 
-    float centerHole = sdBox(translate(sPath, vec3(-11.5, 12.9, 0.0)), vec3(0.0), vec3(12.5, 8.4, 15.0), 1.8) * scale;
-    float gearHole = sdCappedCylinder(translate(rotX(sPath, 1.5708), vec3(-21.3 - 22.0, 0.0, 11.0)), vec2(11.0, 15.0), 0.0) * scale; 
-    float pinHole1 = sdCappedCylinder(translate(rotX(sPath, 1.5708), vec3(-48.5, 0.0, -59.0)), vec2(4.6, 40.0), 0.0) * scale;
-    float pinHole2 = sdBox(translate(rotX(sPath, 1.5708), vec3(-30.0, 0.0, -55.0)), vec3(0.0), vec3(4.2, 40.0, 4.2), 0.0) * scale;
-    float bodyLowerEmpty = sdBox(translate(sPath, vec3(-27.0, -59.0, 0.0)), vec3(0.0), vec3(37.0, 8.0, 10.0), 0.0) * scale;
-    float copyHole = sdBox(translate(sPath, vec3(-90.0, 65.0, 0.0)), vec3(0.0), vec3(6.25, 5.0, 5.0), 0.0) * scale;
+    float centerHole = sdBox(translate(sPath, vec3(-11.5, 12.9, 0.0)), vec3(0.0), vec3(12.5, 8.4, 15.0), 1.8);
+    float gearHole = sdCappedCylinder(translate(rotX(sPath, 1.5708), vec3(-21.3 - 22.0, 0.0, 11.0)), vec2(11.0, 15.0), 0.0); 
+    float pinHole1 = sdCappedCylinder(translate(rotX(sPath, 1.5708), vec3(-48.5, 0.0, -59.0)), vec2(4.6, 40.0), 0.0);
+    float pinHole2 = sdBox(translate(rotX(sPath, 1.5708), vec3(-30.0, 0.0, -55.0)), vec3(0.0), vec3(4.2, 40.0, 4.2), 0.0);
+    float bodyLowerEmpty = sdBox(translate(sPath, vec3(-27.0, -59.0, 0.0)), vec3(0.0), vec3(37.0, 8.0, 10.0), 0.0);
+    float copyHole = sdBox(translate(sPath, vec3(-90.0, 65.0, 0.0)), vec3(0.0), vec3(6.25, 5.0, 5.0), 0.0);
    
-    float bottom = sdBox(translate(sPath, vec3(-25.0, -63.6, 0.0)), vec3(0.0, 0.0, 0.0), vec3(13.0, 2.0, 12.0), 0.0) * scale;
+    float bottom = sdBox(translate(sPath, vec3(-25.0, -63.6, 0.0)), vec3(0.0, 0.0, 0.0), vec3(13.0, 2.0, 12.0), 0.0);
     vec2Tuple gearRepeat = repeatPolar(rotZ(translate(sPath, vec3(-45.0, 11.0, 0.0)), time * gearDir).xy, 6);
-    float gears = sdBox(vec3(gearRepeat.first, sPath.z) - vec3(9.0, 0.0, 0.0), vec3(0.0), vec3(1.5, 1.5, 1.5), 0.0) * scale; 
-    float body = opSmoothUnion(bottom, opSmoothSubtraction(copyHole, opSmoothSubtraction(bodyLowerEmpty, opSmoothUnion(gears, opSmoothSubtraction(pinHole2, opSmoothSubtraction(pinHole1, opSmoothSubtraction(gearHole, opSmoothSubtraction(centerHole, opSmoothUnion(opSmoothUnion(bodyBase, bodySideOverHang, 0.0), bodyLowerOverHangUnion, 0.0), 0.0), 0.0), 0.0), 0.0), 0.0), 0.0), 0.0), 0.0);
+    float gears = sdBox(vec3(gearRepeat.first, sPath.z) - vec3(9.0, 0.0, 0.0), vec3(0.0), vec3(1.5, 1.5, 1.5), 0.0); 
+    float body = opSmoothUnion(bottom, opSmoothSubtraction(copyHole, opSmoothSubtraction(bodyLowerEmpty, opSmoothUnion(gears, opSmoothSubtraction(pinHole2, opSmoothSubtraction(pinHole1, opSmoothSubtraction(gearHole, opSmoothSubtraction(centerHole, opSmoothUnion(opSmoothUnion(bodyBase, bodySideOverHang, 0.0), bodyLowerOverHangUnion, 0.0), 0.0), 0.0), 0.0), 0.0), 0.0), 0.0), 0.0), 0.0) * scale;
    
     entity label;
-    float labelPaper = sdBox(translate(sPath, vec3(0.0, 16.0, -11.5)), vec3(0.0), vec3(93.0, 42.0, 2.0), 0.5) * scale;
-    float labelHole = sdBox(translate(sPath, vec3(0.0, 12.0, -11.5)), vec3(0.0), vec3(53.0, 9.0, 2.0), 6.0) * scale;
-    label.dist = opSmoothSubtraction(labelHole, labelPaper, 0.0);
+    float labelPaper = sdBox(translate(sPath, vec3(0.0, 16.0, -11.5)), vec3(0.0), vec3(93.0, 42.0, 2.0), 0.5);
+    float labelHole = sdBox(translate(sPath, vec3(0.0, 12.0, -11.5)), vec3(0.0), vec3(53.0, 9.0, 2.0), 6.0);
+    label.dist = opSmoothSubtraction(labelHole, labelPaper, 0.0) * scale;
     label.point = rotZ(path / scale, 1.5708);
     label.material = labelMat;
     label.needNormals = true;
-
+   
     entity cass;
     cass.dist = body;
     cass.point = sPath;
     cass.material = bodyMat;
     cass.needNormals = true;
-
+   
     entity tape;
     vec3 tapePath = path / scale;
     float tapeX = smoothstep(-65.0, 65.0, tapePath.x);
@@ -749,10 +753,11 @@ entity mCasette(vec3 path, float scale, float time) {
     //tapePath = rotZ(tapePath, cos(tapeX * 2.0) * cos(tapeX * 4.2));
     //tapePath = rotZ(tapePath, pow(tapeX, 2.0)); 
     tapePath = translate(tapePath, vec3(0.0, (pow(tapeX - 0.5, 2.0)) * 150.0, 0.0));
-    //
+   
     tape.dist = sdBox(translate(tapePath, vec3(0.0, -99.6, 0.0)), vec3(0.0), vec3(70.0, 0.2, 8.6), 0.0) * scale;
     tape.material = tapeMat;
     tape.needNormals = true;
+    //return tape;
     return opSmoothUnion(tape, opSmoothSubtraction(label, cass, 0.0, 0.0), 0.0, 0.0);
 }
 
@@ -847,7 +852,7 @@ entity scene(vec3 path, vec2 uv)
         return comb;
     }
     else if(a == 5) {
-        entity cass = mCasette(rot(path, vec3(-0.35, 0.21, -0.45)), 1.0, time);
+        entity cass = mCasette(rot(path, vec3(-0.35, 0.21, -0.45)), 0.02, time);
         return cass;
     }
  
@@ -991,13 +996,33 @@ vec3 generateTexture(int index, vec3 point, vec3 offset, vec3 scale) {
             r = textureCube(cassetteLabel, rp, vec3(0.0, 0.0, 0.1)).xyz;
             break;
         }
+        case 52: {
+            vec3 rp = vec3((point.x / scale.x) + offset.x, (point.y / scale.y) + offset.y, (point.z / scale.z) + offset.z);
+            r = textureCube(adaptGreets, rp, vec3(0.0, 0.0, 1.0)).xyz;
+            break;
+        }
+        case 53: {
+            vec3 rp = vec3((point.x / scale.x) + offset.x, (point.y / scale.y) + offset.y, (point.z / scale.z) + offset.z);
+            r = textureCube(convergeGreets, rp, vec3(0.0, 0.0, 1.0)).xyz;
+            break;
+        }
+        case 54: {
+            vec3 rp = vec3((point.x / scale.x) + offset.x, (point.y / scale.y) + offset.y, (point.z / scale.z) + offset.z);
+            r = textureCube(exoticMenGreets, rp, vec3(0.0, 0.0, 1.0)).xyz;
+            break;
+        }
+        case 55: {
+            vec3 rp = vec3((point.x / scale.x) + offset.x, (point.y / scale.y) + offset.y, (point.z / scale.z) + offset.z);
+            r = textureCube(wideLoadGreets, rp, vec3(0.0, 0.0, 1.0)).xyz;
+            break;
+        }
        
     }  
     return r;
 }
 
 vec3 determinePixelBaseColor(float steps, float dist, entity e) {
-    vec3 base = vec3(1.0 - smoothstep(0.0, rayMaxSteps, steps));
+    vec3 base = vec3(1.0 - smoothstep(0, rayMaxSteps, steps));
     if(e.material.textureOptions.normalMap == false) {
         base *= generateTexture(e.material.textureOptions.index, e.point, e.material.textureOptions.offset, e.material.textureOptions.scale);
     }

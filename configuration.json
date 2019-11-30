@@ -79,6 +79,18 @@
             },
             {
                 "name": "cassetteLabel"
+            },
+            {
+                "name": "adaptGreets"
+            },
+            {
+                "name": "convergeGreets"
+            },
+            {
+                "name": "exoticMenGreets"
+            },
+            {
+                "name": "wideLoadGreets"
             }
         ]
     },
@@ -92,6 +104,26 @@
             "type": "staticTexture",
             "name": "cassetteLabel",
             "file": "assets\\textures\\cassette.png"
+        },
+        {
+            "type": "staticTexture",
+            "name": "adaptGreets",
+            "file": "assets\\textures\\Tahtituho_Greets_Adapt.png"
+        },
+        {
+            "type": "staticTexture",
+            "name": "convergeGreets",
+            "file": "assets\\textures\\Tahtituho_Greets_Converge.png"
+        },
+        {
+            "type": "staticTexture",
+            "name": "exoticMenGreets",
+            "file": "assets\\textures\\Tahtituho_Greets_ExoticMen.png"
+        },
+        {
+            "type": "staticTexture",
+            "name": "wideLoadGreets",
+            "file": "assets\\textures\\Tahtituho_Greets_WideLoad.png"
         }
     ],
     "tracks": [
